@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Distribution Command Center</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1b1e;
+            color: #e0e0e0;
+        }
+        .dashboard-container {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(1, 1fr);
+        }
+        @media (min-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .dashboard-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .panel {
+            background-color: #2e3035;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .panel-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        .gauge-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .gauge-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #3f4147;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gauge-inner-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #2e3035;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .gauge-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .gauge-label {
+            font-size: 0.875rem;
+            color: #a0a0a0;
+        }
+        .water-level {
+            background-color: #4da6ff;
+            transition: height 0.5s ease-in-out;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-bottom-left-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+        }
+        .tank-fill {
+            height: 0;
+            background-color: #4da6ff;
+            transition: height 0.5s ease-in-out;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+        .flow-rate-chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+        }
+        .status-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .status-dot-green {
+            background-color: #4ade80;
+        }
+        .status-dot-red {
+            background-color: #f87171;
+        }
+        .status-dot-yellow {
+            background-color: #facc15;
+        }
+        .site-card {
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .site-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <!-- Main Command Center View -->
+    <div id="command-center-view">
+        <header class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-white">Water Distribution Command Center</h1>
+            <p class="text-gray-400">Overview of all district sites</p>
+        </div>
+        <a href="index.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">
+            Home
+        </a>
+        </header>
+
+        <main id="site-cards-container" class="dashboard-container">
+            <!-- Site cards will be dynamically inserted here -->
+        </main>
+    </div>
+
+    <!-- Site Dashboard View -->
+    <div id="site-dashboard-view" class="hidden">
+        <header class="mb-8 flex items-center justify-between">
+            <div>
+                <h1 id="dashboard-site-name" class="text-3xl font-bold text-white"></h1>
+                <p class="text-gray-400">Detailed real-time monitoring</p>
+            </div>
+            <button id="back-button" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors">
+                &larr; Back to Command Center
+            </button>
+        </header>
+
+        <main class="dashboard-container">
+            <!-- Panel 1: Main Tank Level -->
+            <div class="panel">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="panel-title">Main Tank Level</div>
+                    <div id="tank-level-status" class="text-sm font-semibold text-gray-300"></div>
+                </div>
+                <div class="relative h-64 bg-gray-600 rounded-lg overflow-hidden">
+                    <div id="tank-level-fill" class="tank-fill"></div>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
+                        <span id="tank-level-value" class="text-4xl font-bold"></span>
+                        <span class="text-lg">cubic meters</span>
+                    </div>
+                    <div class="absolute bottom-2 left-2 text-xs text-gray-300">0 m³</div>
+                    <div class="absolute top-2 left-2 text-xs text-gray-300">10 m³</div>
+                </div>
+            </div>
+
+            <!-- Panel 2: Water Flow Rate (Graph) -->
+            <div class="panel">
+                <div class="panel-title">Water Flow Rate ($m^3$/min)</div>
+                <div class="flow-rate-chart-container">
+                    <canvas id="flow-rate-chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Panel 3: Pump Status -->
+            <div class="panel flex flex-col justify-between">
+                <div class="panel-title">Pump Status</div>
+                <div>
+                    <div class="flex items-center py-4 border-b border-gray-600 last:border-b-0">
+                        <span id="pump-main-dot" class="status-dot"></span>
+                        <span class="flex-grow">Main Pump</span>
+                        <span id="pump-main-status" class="text-sm font-medium"></span>
+                    </div>
+                    <div class="flex items-center py-4 border-b border-gray-600 last:border-b-0">
+                        <span id="pump-booster-dot" class="status-dot"></span>
+                        <span class="flex-grow">Booster Pump</span>
+                        <span id="pump-booster-status" class="text-sm font-medium"></span>
+                    </div>
+                    <div class="flex items-center py-4 border-b border-gray-600 last:border-b-0">
+                        <span id="pump-filter-dot" class="status-dot"></span>
+                        <span class="flex-grow">Filtration Pump</span>
+                        <span id="pump-filter-status" class="text-sm font-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel 4: System Pressure -->
+            <div class="panel">
+                <div class="panel-title">System Pressure (psi)</div>
+                <div class="gauge-container">
+                    <div class="gauge-circle">
+                        <div class="gauge-inner-circle">
+                            <span id="pressure-value" class="gauge-value"></span>
+                            <span class="gauge-label">psi</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-400">Normal Range: 40-60 psi</div>
+                </div>
+            </div>
+
+            <!-- Panel 5: Water Quality (pH) -->
+            <div class="panel">
+                <div class="panel-title">Water Quality (pH)</div>
+                <div class="gauge-container">
+                    <div class="gauge-circle">
+                        <div class="gauge-inner-circle">
+                            <span id="ph-value" class="gauge-value"></span>
+                            <span class="gauge-label">pH</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-sm text-gray-400">Safe Range: 6.5-8.5</div>
+                </div>
+            </div>
+
+            <!-- Panel 6: VFD Fault Status -->
+            <div class="panel">
+                <div class="panel-title">VFD Main Pump Status</div>
+                <div class="grid grid-cols-2 gap-4 mt-2">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <p class="text-sm font-medium text-gray-400">Motor Power</p>
+                        <p id="motor-power-value" class="text-xl font-bold text-white"></p>
+                        <p class="text-xs text-gray-500">kW</p>
+                    </div>
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <p class="text-sm font-medium text-gray-400">Current Speed</p>
+                        <p id="motor-speed-value" class="text-xl font-bold text-white"></p>
+                        <p class="text-xs text-gray-500">RPM</p>
+                    </div>
+                </div>
+                <div class="mt-6 flex flex-col items-center justify-center text-center">
+                    <div id="vfd-status" class="text-lg font-semibold mb-1 flex items-center">
+                        <span id="vfd-status-dot" class="status-dot status-dot-green"></span>
+                        <span id="vfd-message" class="text-green-400">No Fault</span>
+                    </div>
+                    <div id="vfd-code" class="text-2xl font-bold text-white mb-1">0</div>
+                    <div id="vfd-description" class="text-sm text-gray-400">Normal Operation</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="mt-8 text-center text-gray-500 text-sm">
+        <p>Dashboard Mockup &copy; 2025</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Global data store for all sites
+        const sites = {
+            "east-district": {
+                name: "East District",
+                tankLevel: 7.5,
+                pressure: 55,
+                ph: 7.2,
+                vfdFaultCode: 0,
+                motorPower: 5.0,
+                motorSpeed: 1500,
+                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                chartInstance: null
+            },
+            "west-district": {
+                name: "West District",
+                tankLevel: 3.2,
+                pressure: 48,
+                ph: 6.8,
+                vfdFaultCode: 0,
+                motorPower: 7.5,
+                motorSpeed: 1800,
+                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                chartInstance: null
+            },
+            "north-district": {
+                name: "North District",
+                tankLevel: 9.1,
+                pressure: 62,
+                ph: 8.1,
+                vfdFaultCode: 0,
+                motorPower: 6.3,
+                motorSpeed: 1650,
+                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                chartInstance: null
+            },
+            "south-district": {
+                name: "South District",
+                tankLevel: 5.5,
+                pressure: 58,
+                ph: 7.5,
+                vfdFaultCode: 0,
+                motorPower: 8.0,
+                motorSpeed: 1900,
+                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                chartInstance: null
+            }
+        };
+
+        const faultCodes = {
+            0: "Normal Operation",
+            10: "Overvoltage",
+            21: "Overcurrent",
+            34: "Motor Overload",
+            55: "Drive Overtemperature",
+            72: "Input Phase Loss",
+            89: "Communication Error"
+        };
+        
+        let activeSiteId = null;
+
+        const commandCenterView = document.getElementById('command-center-view');
+        const siteDashboardView = document.getElementById('site-dashboard-view');
+        const siteCardsContainer = document.getElementById('site-cards-container');
+        const dashboardSiteName = document.getElementById('dashboard-site-name');
+        const backButton = document.getElementById('back-button');
+
+        // Function to render the command center view
+        function renderCommandCenter() {
+            commandCenterView.classList.remove('hidden');
+            siteDashboardView.classList.add('hidden');
+            siteCardsContainer.innerHTML = ''; // Clear existing cards
+            
+            for (const siteId in sites) {
+                const site = sites[siteId];
+                const card = document.createElement('div');
+                card.className = 'panel site-card flex flex-col justify-center items-center text-center';
+                card.dataset.siteId = siteId;
+
+                let statusClass = 'status-dot-green';
+                let statusText = 'Normal';
+                if (site.vfdFaultCode !== 0) {
+                    statusClass = 'status-dot-red';
+                    statusText = 'Fault';
+                }
+
+                card.innerHTML = `
+                    <div class="panel-title">${site.name}</div>
+                    <p class="text-4xl font-bold">${site.tankLevel.toFixed(2)}</p>
+                    <p class="text-lg text-gray-400">cubic meters</p>
+                    <div class="mt-4 flex items-center text-lg font-semibold">
+                        <span class="status-dot ${statusClass}"></span>
+                        <span class="text-gray-300">${statusText}</span>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    activeSiteId = siteId;
+                    renderSiteDashboard();
+                });
+                siteCardsContainer.appendChild(card);
+            }
+        }
+
+        // Function to render a specific site dashboard
+        function renderSiteDashboard() {
+            commandCenterView.classList.add('hidden');
+            siteDashboardView.classList.remove('hidden');
+            dashboardSiteName.textContent = sites[activeSiteId].name;
+            
+            // Re-initialize chart for the new site
+            if (sites[activeSiteId].chartInstance) {
+                sites[activeSiteId].chartInstance.destroy();
+                sites[activeSiteId].chartInstance = null;
+            }
+            initializeFlowRateChart(activeSiteId);
+            updateDashboard(activeSiteId);
+        }
+
+        // Function to update the tank level display for a specific site
+        function updateTankLevel(siteId) {
+            const site = sites[siteId];
+            const levelFill = document.getElementById('tank-level-fill');
+            const levelValue = document.getElementById('tank-level-value');
+            const levelStatus = document.getElementById('tank-level-status');
+            const percentage = (site.tankLevel / 10) * 100;
+            levelFill.style.height = `${percentage}%`;
+            levelValue.textContent = `${site.tankLevel.toFixed(2)}`;
+
+            if (percentage < 20) {
+                levelStatus.textContent = "Low Level";
+                levelStatus.classList.remove('text-green-400', 'text-yellow-400');
+                levelStatus.classList.add('text-red-400');
+            } else if (percentage > 80) {
+                levelStatus.textContent = "High Level";
+                levelStatus.classList.remove('text-green-400', 'text-red-400');
+                levelStatus.classList.add('text-yellow-400');
+            } else {
+                levelStatus.textContent = "Optimal";
+                levelStatus.classList.remove('text-red-400', 'text-yellow-400');
+                levelStatus.classList.add('text-green-400');
+            }
+        }
+
+        // Function to update the gauges (Pressure and pH) for a specific site
+        function updateGauges(siteId) {
+            const site = sites[siteId];
+            const pressureValue = document.getElementById('pressure-value');
+            const phValue = document.getElementById('ph-value');
+            pressureValue.textContent = site.pressure.toFixed(1);
+            phValue.textContent = site.ph.toFixed(1);
+        }
+
+        // Function to update pump status for a specific site
+        function updatePumpStatus(siteId) {
+            // Logic remains the same, but it's part of the dashboard view now
+            const pumps = [
+                { id: 'pump-main', status: Math.random() > 0.1 ? 'ON' : 'OFF' },
+                { id: 'pump-booster', status: Math.random() > 0.3 ? 'ON' : 'OFF' },
+                { id: 'pump-filter', status: Math.random() > 0.2 ? 'ON' : 'OFF' }
+            ];
+
+            pumps.forEach(pump => {
+                const dot = document.getElementById(`${pump.id}-dot`);
+                const status = document.getElementById(`${pump.id}-status`);
+                status.textContent = pump.status;
+
+                dot.classList.remove('status-dot-green', 'status-dot-red');
+                if (pump.status === 'ON') {
+                    dot.classList.add('status-dot-green');
+                    status.classList.remove('text-red-400');
+                    status.classList.add('text-green-400');
+                } else {
+                    dot.classList.add('status-dot-red');
+                    status.classList.remove('text-green-400');
+                    status.classList.add('text-red-400');
+                }
+            });
+        }
+
+        // Function to update VFD Fault Status and other data for a specific site
+        function updateVfdStatus(siteId) {
+            const site = sites[siteId];
+            const vfdCode = document.getElementById('vfd-code');
+            const vfdMessage = document.getElementById('vfd-message');
+            const vfdDescription = document.getElementById('vfd-description');
+            const vfdDot = document.getElementById('vfd-status-dot');
+            const motorPowerValue = document.getElementById('motor-power-value');
+            const motorSpeedValue = document.getElementById('motor-speed-value');
+
+            // Update VFD fault display
+            vfdCode.textContent = site.vfdFaultCode;
+            vfdDescription.textContent = faultCodes[site.vfdFaultCode] || "Unknown Fault";
+            vfdDot.classList.remove('status-dot-green', 'status-dot-red');
+            vfdMessage.classList.remove('text-green-400', 'text-red-400');
+
+            if (site.vfdFaultCode === 0) {
+                vfdMessage.textContent = "No Fault";
+                vfdDot.classList.add('status-dot-green');
+                vfdMessage.classList.add('text-green-400');
+            } else {
+                vfdMessage.textContent = "FAULT";
+                vfdDot.classList.add('status-dot-red');
+                vfdMessage.classList.add('text-red-400');
+            }
+
+            // Update motor power and speed display
+            motorPowerValue.textContent = site.motorPower.toFixed(2);
+            motorSpeedValue.textContent = site.motorSpeed;
+        }
+        
+        // Update all panels for a specific site
+        function updateDashboard(siteId) {
+            updateTankLevel(siteId);
+            updateGauges(siteId);
+            updatePumpStatus(siteId);
+            updateVfdStatus(siteId);
+        }
+
+        // Initialize the flow rate chart
+        function initializeFlowRateChart(siteId) {
+            const site = sites[siteId];
+            const ctx = document.getElementById('flow-rate-chart').getContext('2d');
+            const timeLabels = Array.from({ length: 15 }, (_, i) => `${i * 5} sec ago`);
+
+            site.chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'Flow Rate ($m^3$/min)',
+                        data: site.flowRateData,
+                        borderColor: '#4da6ff',
+                        backgroundColor: 'rgba(77, 166, 255, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            display: false,
+                            grid: { color: '#3f4147' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 0.1,
+                            grid: { color: '#3f4147' },
+                            ticks: { color: '#a0a0a0' }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true, callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) { label += context.parsed.y.toFixed(3); }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Function to update the flow rate chart with new data
+        function updateFlowRateChart(siteId) {
+            const site = sites[siteId];
+            const newData = Math.random() * 0.05 + 0.02;
+            site.flowRateData.push(newData);
+            site.flowRateData.shift();
+            if (site.chartInstance) {
+                site.chartInstance.update();
+            }
+        }
+        
+        // Simulate real-time data updates for all sites
+        function simulateAllData() {
+            for (const siteId in sites) {
+                const site = sites[siteId];
+                // Randomly change values
+                site.tankLevel += (Math.random() * 0.5) - 0.25;
+                site.tankLevel = Math.max(0, Math.min(10, site.tankLevel));
+
+                site.pressure += (Math.random() * 5) - 2.5;
+                site.pressure = Math.max(0, Math.min(100, site.pressure));
+
+                site.ph += (Math.random() * 0.2) - 0.1;
+                site.ph = Math.max(6, Math.min(9, site.ph));
+
+                // Randomly add a fault
+                const faultCodesList = Object.keys(faultCodes);
+                const randomIndex = Math.floor(Math.random() * (faultCodesList.length + 10)); // Higher chance of no fault
+                site.vfdFaultCode = randomIndex < faultCodesList.length ? parseInt(faultCodesList[randomIndex], 10) : 0;
+                
+                // Randomly change motor power and speed
+                site.motorPower = (Math.random() * 20) + 5;
+                site.motorSpeed = Math.floor(Math.random() * 1000) + 1000;
+                
+                // Update flow rate data
+                updateFlowRateChart(siteId);
+            }
+            
+            // Re-render the active view
+            if (activeSiteId === null) {
+                renderCommandCenter();
+            } else {
+                updateDashboard(activeSiteId);
+            }
+        }
+
+        // Event listener for the back button
+        backButton.addEventListener('click', () => {
+            activeSiteId = null;
+            renderCommandCenter();
+        });
+
+        // Initial setup on window load
+        window.onload = function() {
+            renderCommandCenter();
+            setInterval(simulateAllData, 2000); // Update every 2 seconds
+        };
+    </script>
+</body>
+</html>
