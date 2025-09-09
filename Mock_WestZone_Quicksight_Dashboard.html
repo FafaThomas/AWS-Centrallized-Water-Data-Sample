@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West Zone Dashboard</title>
+    <link href="./dist/output.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-10">
+
+    <!-- Dashboard Header -->
+    <header class="bg-white p-6 rounded-xl shadow-md mb-6 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">West Zone Dashboard</h1>
+            <p class="text-gray-500 mt-1">Key Performance Indicators for Water Management</p>
+        </div>
+        <a href="index.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">
+            Home
+        </a>
+    </header>
+
+    <main class="space-y-6">
+
+        <!-- Combined Production Performance Charts -->
+        <h2 class="text-2xl font-semibold text-gray-800 mt-6 mb-4">Combined Production Performance Charts</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <!-- Combined West Zone Production Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Combined West Zone Production</h2>
+                <div class="relative flex-grow">
+                    <canvas id="combinedWestZoneChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pump Station 1 Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station 1</h2>
+                <div class="relative flex-grow">
+                    <canvas id="pumpStation1Chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pump Station 2 Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station 2</h2>
+                <div class="relative flex-grow">
+                    <canvas id="pumpStation2Chart"></canvas>
+                </div>
+            </div>
+
+            <!-- Pump Station 3 Chart -->
+            <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station 3</h2>
+                <div class="relative flex-grow">
+                    <canvas id="pumpStation3Chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Performance -->
+        <h2 class="text-2xl font-semibold text-gray-800 mt-10 mb-4">Last Month's System Performance</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+             <!-- Amount Produced Treemap -->
+             <div class="bg-white p-6 rounded-xl shadow-md h-96 flex flex-col justify-center items-center">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">System Input Volume</h2>
+                <div id="producedTreeChart" class="w-full h-full"></div>
+                <div id="producedTotal" class="text-lg font-bold text-gray-700 mt-4"></div>
+            </div>
+
+            <!-- Amount Billed Treemap -->
+            <div class="bg-white p-6 rounded-xl shadow-md h-96 flex flex-col justify-center items-center">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Billed Consumption</h2>
+                <div id="billedTreeChart" class="w-full h-full"></div>
+                <div id="billedTotal" class="text-lg font-bold text-gray-700 mt-4"></div>
+            </div>
+        </div>
+
+        <!-- NRW Combined Line Chart -->
+        <h2 class="text-2xl font-semibold text-gray-800 mt-10 mb-4">NRW Performance - West Zone</h2>
+        <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">NRW % - All Pump Stations</h2>
+            <div class="relative flex-grow">
+                <canvas id="combinedNRWChart"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const labels = ['Pump Station 1', 'Pump Station 2', 'Pump Station 3'];
+            const dataKeys = ['ps1', 'ps2', 'ps3'];
+            const colors = ['rgb(59, 130, 246)', 'rgb(74, 222, 128)', 'rgb(239, 68, 68)'];
+
+            // Sample data for each pump station (West Zone data)
+            const combinedData = {
+                ps1: {
+                    kwh: [0.45, 0.42, 0.40, 0.44, 0.43, 0.46, 0.45, 0.42, 0.41, 0.39, 0.38, 0.37],
+                    energy: [4500, 4200, 4000, 4400, 4300, 4600, 4500, 4200, 4100, 3900, 3800, 3700],
+                    volume: [10000, 9800, 9500, 10200, 10100, 10500, 10300, 9900, 9700, 9600, 9800, 9900]
+                },
+                ps2: {
+                    kwh: [0.50, 0.48, 0.47, 0.49, 0.51, 0.52, 0.50, 0.48, 0.46, 0.45, 0.44, 0.43],
+                    energy: [5500, 5200, 5000, 5400, 5300, 5600, 5500, 5200, 5100, 4900, 4800, 4700],
+                    volume: [11000, 10800, 10500, 11200, 11100, 11500, 11300, 10900, 10700, 10600, 10800, 10900]
+                },
+                ps3: {
+                    kwh: [0.35, 0.38, 0.39, 0.41, 0.40, 0.39, 0.38, 0.37, 0.36, 0.35, 0.34, 0.33],
+                    energy: [3500, 3300, 3400, 3600, 3550, 3450, 3400, 3200, 3100, 3000, 2900, 2800],
+                    volume: [8000, 7800, 7900, 8100, 8050, 7950, 7850, 7700, 7600, 7500, 7400, 7300]
+                }
+            };
+
+            // Calculate combined data for all pump stations
+            const totalWestZoneData = {
+                kwh: [],
+                energy: [],
+                volume: []
+            };
+
+            for (let i = 0; i < months.length; i++) {
+                totalWestZoneData.kwh.push(
+                    (combinedData.ps1.kwh[i] + combinedData.ps2.kwh[i] + combinedData.ps3.kwh[i]) / 3
+                );
+                totalWestZoneData.energy.push(
+                    combinedData.ps1.energy[i] + combinedData.ps2.energy[i] + combinedData.ps3.energy[i]
+                );
+                totalWestZoneData.volume.push(
+                    combinedData.ps1.volume[i] + combinedData.ps2.volume[i] + combinedData.ps3.volume[i]
+                );
+            }
+
+            // Sample data for NRW and billed volume
+            const nrwData = {
+                ps1: [20, 18, 17, 19, 18, 21, 20, 18, 16, 15, 14, 13],
+                // Elevated NRW data for Pump Station 2 to create the narrative
+                ps2: [45, 42, 41, 44, 43, 46, 45, 42, 40, 39, 38, 37],
+                ps3: [12, 13, 14, 12, 11, 13, 12, 11, 10, 9, 8, 7]
+            };
+            const nrwColors = ['rgb(59, 130, 246)', 'rgb(239, 68, 68)', 'rgb(74, 222, 128)'];
+
+            // Calculate billed volume based on NRW
+            const billedData = {};
+            for (const key of dataKeys) {
+                billedData[key] = combinedData[key].volume.map((volume, index) => {
+                    return volume * (1 - nrwData[key][index] / 100);
+                });
+            }
+
+            // Chart configuration and creation functions
+            const createCombinedChart = (canvasId, volumeData, energyData, kwhData) => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [
+                            {
+                                label: 'Monthly Water Volume (m³)',
+                                data: volumeData,
+                                backgroundColor: 'rgba(59, 130, 246, 0.6)',
+                                borderColor: 'rgb(59, 130, 246)',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Monthly Energy (kWh)',
+                                data: energyData,
+                                backgroundColor: 'rgba(74, 222, 128, 0.6)',
+                                borderColor: 'rgb(74, 222, 128)',
+                                borderWidth: 1,
+                                borderRadius: 5,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'kWh per Cubic Meter',
+                                data: kwhData,
+                                borderColor: 'rgb(239, 68, 68)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                tension: 0.3,
+                                type: 'line',
+                                pointBackgroundColor: 'rgb(239, 68, 68)',
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#4b5563'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                grid: {
+                                    color: '#e5e7eb'
+                                },
+                                ticks: {
+                                    color: '#6b7280'
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                grid: {
+                                    drawOnChartArea: false,
+                                    color: '#e5e7eb'
+                                },
+                                ticks: {
+                                    color: '#ef4444'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: '#6b7280'
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+            
+            // Create a single NRW chart for all districts
+            const combinedNRWChartCtx = document.getElementById('combinedNRWChart').getContext('2d');
+            new Chart(combinedNRWChartCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: labels.map((label, index) => ({
+                        label: label,
+                        data: nrwData[dataKeys[index]],
+                        borderColor: nrwColors[index],
+                        backgroundColor: nrwColors[index].replace('rgb', 'rgba').replace(')', ', 0.2)'),
+                        tension: 0.3,
+                        pointBackgroundColor: nrwColors[index]
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#4b5563'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: '#e5e7eb' }, 
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}%`;
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Treemap creation function using ECharts
+            const createTreeChart = (containerId, chartData, unit) => {
+                const chartDom = document.getElementById(containerId);
+                const chart = echarts.init(chartDom);
+                
+                const total = chartData.reduce((sum, current) => sum + current.value, 0);
+
+                const option = {
+                    tooltip: {
+                        formatter: (info) => {
+                            const value = info.value;
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return `${info.name}<br/>
+                                <strong>Value:</strong> ${value.toLocaleString()} ${unit}<br/>
+                                <strong>Percentage:</strong> ${percentage}%`;
+                        }
+                    },
+                    series: [{
+                        type: 'treemap',
+                        data: chartData,
+                        label: {
+                            show: true,
+                            formatter: (params) => {
+                                const value = params.value;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `{b|${params.name}}\n{a|${value.toLocaleString()} ${unit}\n(${percentage}%) }`;
+                            },
+                            rich: {
+                                a: {
+                                    fontSize: 12,
+                                    lineHeight: 16,
+                                    color: '#fff',
+                                },
+                                b: {
+                                    fontSize: 14,
+                                    lineHeight: 20,
+                                    fontWeight: 'bold',
+                                    color: '#fff'
+                                }
+                            }
+                        },
+                        itemStyle: {
+                            borderColor: '#fff',
+                            borderWidth: 1,
+                            gapWidth: 2
+                        },
+                        roam: false,
+                        nodeClick: false
+                    }]
+                };
+
+                chart.setOption(option);
+
+                // Update the total display div
+                const totalElement = document.getElementById(containerId.replace('TreeChart', 'Total'));
+                totalElement.textContent = `Total: ${total.toLocaleString()} ${unit}`;
+            };
+
+
+            // Get last month's data
+            const lastMonthIndex = months.length - 1;
+            const lastMonthProduced = dataKeys.map(key => combinedData[key].volume[lastMonthIndex]);
+            const lastMonthBilled = dataKeys.map(key => billedData[key][lastMonthIndex]);
+            
+            // Format data for treemaps
+            const producedTreeData = labels.map((label, index) => ({
+                name: label,
+                value: lastMonthProduced[index],
+                itemStyle: { color: colors[index] }
+            }));
+            const billedTreeData = labels.map((label, index) => ({
+                name: label,
+                value: lastMonthBilled[index],
+                itemStyle: { color: colors[index] }
+            }));
+
+
+            // Create combined charts for each pump station
+            createCombinedChart('combinedWestZoneChart', totalWestZoneData.volume, totalWestZoneData.energy, totalWestZoneData.kwh);
+            createCombinedChart('pumpStation1Chart', combinedData.ps1.volume, combinedData.ps1.energy, combinedData.ps1.kwh);
+            createCombinedChart('pumpStation2Chart', combinedData.ps2.volume, combinedData.ps2.energy, combinedData.ps2.kwh);
+            createCombinedChart('pumpStation3Chart', combinedData.ps3.volume, combinedData.ps3.energy, combinedData.ps3.kwh);
+            
+            // Create treemaps
+            createTreeChart('producedTreeChart', producedTreeData, 'm³');
+            createTreeChart('billedTreeChart', billedTreeData, 'm³');
+        });
+    </script>
+</body>
+</html>
