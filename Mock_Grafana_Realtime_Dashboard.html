@@ -8,7 +8,7 @@
         Original file linked to a local stylesheet.
         Replacing with Tailwind CDN for correct display in this environment.
     -->
-    <link href="./dist/output.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,94 +33,30 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 2rem;
+        }
         .panel {
-            background-color: #2e3035;
+            background-color: #27282b;
             padding: 1.5rem;
             border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
             position: relative;
         }
         .panel-title {
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: #ffffff;
-        }
-        .gauge-container {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .gauge-circle {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background-color: #3f4147;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .gauge-inner-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: #2e3035;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .gauge-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-        .gauge-label {
-            font-size: 0.875rem;
-            color: #a0a0a0;
-        }
-        .water-level {
-            background-color: #4da6ff;
-            transition: height 0.5s ease-in-out;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            border-bottom-left-radius: 0.75rem;
-            border-bottom-right-radius: 0.75rem;
-        }
-        .tank-fill {
-            height: 0;
-            background-color: #4da6ff;
-            transition: height 0.5s ease-in-out;
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            color: #fff;
         }
         .chart-container {
             position: relative;
             height: 200px;
             width: 100%;
-        }
-        .status-dot {
-            width: 0.75rem;
-            height: 0.75rem;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 0.5rem;
-        }
-        .status-dot-green {
-            background-color: #4ade80;
-        }
-        .status-dot-red {
-            background-color: #f87171;
-        }
-        .status-dot-yellow {
-            background-color: #facc15;
         }
         .site-card {
             cursor: pointer;
@@ -130,8 +66,6 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
         }
-
-        /* New styles for better aesthetic */
         .zone-container {
             border: 1px solid #3f4147;
             border-radius: 0.75rem;
@@ -157,20 +91,83 @@
             font-size: 0.75rem;
             color: #a0a0a0;
         }
+        .status-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .status-dot-green {
+            background-color: #4ade80;
+        }
+        .status-dot-red {
+            background-color: #f87171;
+        }
+        .status-dot-yellow {
+            background-color: #facc15;
+        }
+        .gauge-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .gauge-circle {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: #3f4147;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gauge-inner-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #27282b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .gauge-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        .gauge-label {
+            font-size: 0.875rem;
+            color: #a0a0a0;
+        }
+        .tank-fill {
+            height: 0;
+            background-color: #3b82f6;
+            transition-property: height;
+            transition-duration: 500ms;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
     </style>
 </head>
-<body class="p-8">
+<body class="bg-[#1a1b1e] text-[#e0e0e0]">
 
     <!-- Main Command Center View -->
-    <div id="command-center-view">
+    <div id="command-center-view" class="container">
         <header class="flex items-center justify-between mb-8">
-        <div>
-            <h1 class="text-3xl font-bold text-white">Water Distribution Command Center</h1>
-            <p class="text-gray-400">Overview of all district sites</p>
-        </div>
-        <a href="index.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">
-            Home
-        </a>
+            <div>
+                <h1 class="text-3xl font-bold text-white">Water Distribution Command Center</h1>
+                <p class="text-gray-400">Overview of all district sites</p>
+            </div>
+            <a href="index.html" class="bg-[#2563eb] hover:bg-[#1d4ed8] text-white font-medium py-2 px-6 rounded-full transition duration-300">
+                Home
+            </a>
         </header>
 
         <!-- Container for Zones and their Pumping Station Cards -->
@@ -179,8 +176,8 @@
         </main>
     </div>
 
-    <!-- Site Dashboard View (Unchanged as per your request) -->
-    <div id="site-dashboard-view" class="hidden">
+    <!-- Site Dashboard View -->
+    <div id="site-dashboard-view" class="container hidden">
         <header class="mb-8 flex items-center justify-between">
             <div>
                 <h1 id="dashboard-site-name" class="text-3xl font-bold text-white"></h1>
@@ -279,19 +276,32 @@
                 </div>
             </div>
 
-            <!-- Panel 6: VFD Fault Status -->
+            <!-- Panel 6: VFD Main Pump Status -->
             <div class="panel">
-                <div class="panel-title">VFD Status Monitoring</div>
+                <div class="panel-title">VFD Main Pump Status</div>
+                <!-- CHANGES: Added VFD and Ambient Temp to VFD Panel -->
                 <div class="grid grid-cols-2 gap-4 mt-2">
                     <div class="flex flex-col items-center justify-center text-center">
                         <p class="text-sm font-medium text-gray-400">Motor Power</p>
                         <p id="motor-power-value" class="text-xl font-bold text-white"></p>
-                        <p class="text-xs text-gray-500">kW</p>
+                        <p class="text-xs text-gray-400">kW</p>
                     </div>
                     <div class="flex flex-col items-center justify-center text-center">
                         <p class="text-sm font-medium text-gray-400">Current Speed</p>
                         <p id="motor-speed-value" class="text-xl font-bold text-white"></p>
-                        <p class="text-xs text-gray-500">RPM</p>
+                        <p class="text-xs text-gray-400">RPM</p>
+                    </div>
+                    <!-- New VFD Temperature metric -->
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <p class="text-sm font-medium text-gray-400">VFD Temp</p>
+                        <p id="vfd-temp-value" class="text-xl font-bold text-white"></p>
+                        <p class="text-xs text-gray-400">&deg;C</p>
+                    </div>
+                    <!-- New Ambient Room Temperature metric -->
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <p class="text-sm font-medium text-gray-400">Ambient Temp</p>
+                        <p id="ambient-temp-value" class="text-xl font-bold text-white"></p>
+                        <p class="text-xs text-gray-400">&deg;C</p>
                     </div>
                 </div>
                 <div class="mt-6 flex flex-col items-center justify-center text-center">
@@ -333,6 +343,9 @@
                         vfdFaultCode: 0,
                         motorPower: 15.5,
                         motorSpeed: 1500,
+                        // CHANGES: Added VFD and Ambient Temp to each station
+                        vfdTemp: 45,
+                        ambientTemp: 28,
                         flowRate: 0.045,
                         flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
                         pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
@@ -355,6 +368,9 @@
                         vfdFaultCode: 0,
                         motorPower: 12.0,
                         motorSpeed: 1800,
+                        // CHANGES: Added VFD and Ambient Temp to each station
+                        vfdTemp: 48,
+                        ambientTemp: 31,
                         flowRate: 0.032,
                         flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
                         pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
@@ -377,6 +393,9 @@
                         vfdFaultCode: 10,
                         motorPower: 18.2,
                         motorSpeed: 1650,
+                        // CHANGES: Added VFD and Ambient Temp to each station
+                        vfdTemp: 55,
+                        ambientTemp: 35,
                         flowRate: 0.061,
                         flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
                         pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
@@ -404,6 +423,9 @@
                         vfdFaultCode: 0,
                         motorPower: 14.8,
                         motorSpeed: 1900,
+                        // CHANGES: Added VFD and Ambient Temp to each station
+                        vfdTemp: 42,
+                        ambientTemp: 26,
                         flowRate: 0.055,
                         flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
                         pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
@@ -426,6 +448,9 @@
                         vfdFaultCode: 0,
                         motorPower: 10.5,
                         motorSpeed: 1750,
+                        // CHANGES: Added VFD and Ambient Temp to each station
+                        vfdTemp: 50,
+                        ambientTemp: 30,
                         flowRate: 0.021,
                         flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
                         pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
@@ -448,6 +473,9 @@
                         vfdFaultCode: 21,
                         motorPower: 22.0,
                         motorSpeed: 2100,
+                        // CHANGES: Added VFD and Ambient Temp to each station
+                        vfdTemp: 58,
+                        ambientTemp: 38,
                         flowRate: 0.088,
                         flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
                         pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
@@ -580,8 +608,7 @@
                             renderSiteDashboard();
                         });
                     } else {
-                        card.style.opacity = 0.5; // Visually indicate it's offline
-                        card.style.cursor = 'not-allowed';
+                        card.classList.add('opacity-50', 'cursor-not-allowed'); // Visually indicate it's offline
                     }
                     stationsContainer.appendChild(card);
                 }
@@ -628,17 +655,15 @@
             levelValue.textContent = `${cubicMeters.toFixed(1)}`; // Display cubic meters
             
             // Adjust status text based on percentage
+            levelStatus.classList.remove('text-green-400', 'text-yellow-400', 'text-red-400');
             if (percentage < 20) {
                 levelStatus.textContent = "Low Level";
-                levelStatus.classList.remove('text-green-400', 'text-yellow-400');
                 levelStatus.classList.add('text-red-400');
             } else if (percentage > 80) {
                 levelStatus.textContent = "High Level";
-                levelStatus.classList.remove('text-green-400', 'text-red-400');
                 levelStatus.classList.add('text-yellow-400');
             } else {
                 levelStatus.textContent = "Optimal";
-                levelStatus.classList.remove('text-red-400', 'text-yellow-400');
                 levelStatus.classList.add('text-green-400');
             }
         }
@@ -732,6 +757,9 @@
             const vfdDot = document.getElementById('vfd-status-dot');
             const motorPowerValue = document.getElementById('motor-power-value');
             const motorSpeedValue = document.getElementById('motor-speed-value');
+            // CHANGES: Get new temperature elements
+            const vfdTempValue = document.getElementById('vfd-temp-value');
+            const ambientTempValue = document.getElementById('ambient-temp-value');
 
             // Update VFD fault display
             vfdCode.textContent = station.vfdFaultCode;
@@ -752,6 +780,10 @@
             // Update motor power and speed display
             motorPowerValue.textContent = station.motorPower.toFixed(2);
             motorSpeedValue.textContent = station.motorSpeed;
+            
+            // CHANGES: Update new temperature values
+            vfdTempValue.textContent = station.vfdTemp.toFixed(1);
+            ambientTempValue.textContent = station.ambientTemp.toFixed(1);
         }
         
         // Update all panels for a specific site
@@ -767,7 +799,9 @@
             const station = getStationById(stationId);
             if (!station) return;
             const ctx = document.getElementById('flow-rate-chart').getContext('2d');
-            const timeLabels = Array.from({ length: 15 }, (_, i) => `${i * 5} sec ago`);
+            
+            // CHANGES: Generate labels for the x-axis to show "seconds ago".
+            const timeLabels = Array.from({ length: 15 }, (_, i) => `${30 - (i * 2)}s ago`);
 
             station.flowChartInstance = new Chart(ctx, {
                 type: 'line',
@@ -788,9 +822,11 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
+                        // CHANGES: The x-axis is now explicitly configured to use the time labels.
                         x: {
-                            display: false,
-                            grid: { color: '#3f4147' }
+                            display: true,
+                            grid: { color: '#3f4147' },
+                            ticks: { color: '#a0a0a0' }
                         },
                         y: {
                             beginAtZero: true,
@@ -826,7 +862,9 @@
             const station = getStationById(stationId);
             if (!station) return;
             const ctx = document.getElementById('pressure-chart').getContext('2d');
-            const timeLabels = Array.from({ length: 15 }, (_, i) => `${i * 5} sec ago`);
+            
+            // CHANGES: Generate labels for the x-axis to show "seconds ago".
+            const timeLabels = Array.from({ length: 15 }, (_, i) => `${30 - (i * 2)}s ago`);
             
             station.pressureChartInstance = new Chart(ctx, {
                 type: 'line',
@@ -870,9 +908,11 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
+                        // CHANGES: The x-axis is configured to use the new time labels.
                         x: {
-                            display: false,
-                            grid: { color: '#3f4147' }
+                            display: true,
+                            grid: { color: '#3f4147' },
+                            ticks: { color: '#a0a0a0' }
                         },
                         y: {
                             beginAtZero: false,
@@ -995,6 +1035,16 @@
                     station.motorPower = (Math.random() * 20) + 5;
                     station.motorSpeed = Math.floor(Math.random() * 1000) + 1000;
                     
+                    // CHANGES: Simulate VFD and Ambient Temp
+                    // First, update the ambient temp
+                    station.ambientTemp += (Math.random() * 1) - 0.5;
+                    station.ambientTemp = Math.max(15, Math.min(45, station.ambientTemp));
+                    
+                    // Then, calculate VFD temp to be logically higher than ambient
+                    // VFD temp is based on motor power and ambient temp
+                    station.vfdTemp = station.ambientTemp + (station.motorPower / 2) + (Math.random() * 3);
+                    station.vfdTemp = Math.max(station.ambientTemp + 5, Math.min(70, station.vfdTemp));
+
                     // Update chart data
                     updateFlowRateChart(stationId);
                     updatePressureChart(stationId);
@@ -1027,6 +1077,7 @@
         // Initial setup on window load
         window.onload = function() {
             renderCommandCenter();
+            // CHANGES: The charts are updated every 2 seconds, which aligns with the x-axis labels.
             setInterval(simulateAllData, 2000); // Update every 2 seconds
         };
     </script>
