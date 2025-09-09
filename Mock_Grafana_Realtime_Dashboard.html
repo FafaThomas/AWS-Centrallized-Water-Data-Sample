@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water Distribution Command Center</title>
+    <!--
+        Original file linked to a local stylesheet.
+        Replacing with Tailwind CDN for correct display in this environment.
+    -->
     <link href="./dist/output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -97,7 +101,7 @@
             left: 0;
             right: 0;
         }
-        .flow-rate-chart-container {
+        .chart-container {
             position: relative;
             height: 200px;
             width: 100%;
@@ -126,6 +130,33 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
         }
+
+        /* New styles for better aesthetic */
+        .zone-container {
+            border: 1px solid #3f4147;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .metric-label {
+            font-size: 0.875rem;
+            color: #a0a0a0;
+            margin-bottom: 0.25rem;
+        }
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .metric-unit {
+            font-size: 0.75rem;
+            color: #a0a0a0;
+        }
     </style>
 </head>
 <body class="p-8">
@@ -142,12 +173,13 @@
         </a>
         </header>
 
-        <main id="site-cards-container" class="dashboard-container">
-            <!-- Site cards will be dynamically inserted here -->
+        <!-- Container for Zones and their Pumping Station Cards -->
+        <main id="zone-cards-container">
+            <!-- Zone containers and station cards will be dynamically inserted here -->
         </main>
     </div>
 
-    <!-- Site Dashboard View -->
+    <!-- Site Dashboard View (Unchanged as per your request) -->
     <div id="site-dashboard-view" class="hidden">
         <header class="mb-8 flex items-center justify-between">
             <div>
@@ -172,66 +204,78 @@
                         <span id="tank-level-value" class="text-4xl font-bold"></span>
                         <span class="text-lg">cubic meters</span>
                     </div>
-                    <div class="absolute bottom-2 left-2 text-xs text-gray-300">0 m³</div>
-                    <div class="absolute top-2 left-2 text-xs text-gray-300">10 m³</div>
+                    <!-- Updated tank range labels to show percentage -->
+                    <div class="absolute bottom-2 left-2 text-xs text-gray-300">0%</div>
+                    <div class="absolute top-2 left-2 text-xs text-gray-300">100%</div>
                 </div>
             </div>
 
             <!-- Panel 2: Water Flow Rate (Graph) -->
             <div class="panel">
-                <div class="panel-title">Water Flow Rate ($m^3$/min)</div>
-                <div class="flow-rate-chart-container">
+                <div class="panel-title">Water Flow Rate (m³/min)</div>
+                <div class="chart-container">
                     <canvas id="flow-rate-chart"></canvas>
                 </div>
             </div>
 
             <!-- Panel 3: Pump Status -->
             <div class="panel flex flex-col justify-between">
-                <div class="panel-title">Pump Status</div>
+                <div class="panel-title">Submersible Pump Status</div>
                 <div>
+                    <!-- Ground Well Level -->
                     <div class="flex items-center py-4 border-b border-gray-600 last:border-b-0">
-                        <span id="pump-main-dot" class="status-dot"></span>
-                        <span class="flex-grow">Main Pump</span>
-                        <span id="pump-main-status" class="text-sm font-medium"></span>
+                        <span id="well-level-dot" class="status-dot"></span>
+                        <span class="flex-grow">Ground Well Level (mm)</span>
+                        <span id="well-level-value" class="text-sm font-medium"></span>
                     </div>
+                    <!-- Motor Winding Insulation -->
                     <div class="flex items-center py-4 border-b border-gray-600 last:border-b-0">
-                        <span id="pump-booster-dot" class="status-dot"></span>
-                        <span class="flex-grow">Booster Pump</span>
-                        <span id="pump-booster-status" class="text-sm font-medium"></span>
+                        <span id="insulation-dot" class="status-dot"></span>
+                        <span class="flex-grow">Motor Winding Insulation</span>
+                        <span id="insulation-status" class="text-sm font-medium"></span>
                     </div>
+                    <!-- Load Envelop -->
                     <div class="flex items-center py-4 border-b border-gray-600 last:border-b-0">
-                        <span id="pump-filter-dot" class="status-dot"></span>
-                        <span class="flex-grow">Filtration Pump</span>
-                        <span id="pump-filter-status" class="text-sm font-medium"></span>
+                        <span id="load-dot" class="status-dot"></span>
+                        <span class="flex-grow">Load Envelop</span>
+                        <span id="load-status" class="text-sm font-medium"></span>
                     </div>
                 </div>
             </div>
 
-            <!-- Panel 4: System Pressure -->
+            <!-- Panel 4: System Pressure (Graph) -->
             <div class="panel">
                 <div class="panel-title">System Pressure (psi)</div>
-                <div class="gauge-container">
-                    <div class="gauge-circle">
-                        <div class="gauge-inner-circle">
-                            <span id="pressure-value" class="gauge-value"></span>
-                            <span class="gauge-label">psi</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 text-sm text-gray-400">Normal Range: 40-60 psi</div>
+                <div class="chart-container">
+                    <canvas id="pressure-chart"></canvas>
                 </div>
             </div>
 
-            <!-- Panel 5: Water Quality (pH) -->
+            <!-- Panel 5: Water Quality (NEW) -->
             <div class="panel">
-                <div class="panel-title">Water Quality (pH)</div>
-                <div class="gauge-container">
-                    <div class="gauge-circle">
-                        <div class="gauge-inner-circle">
-                            <span id="ph-value" class="gauge-value"></span>
-                            <span class="gauge-label">pH</span>
+                <div class="panel-title">Water Quality</div>
+                <div class="flex items-center justify-around gap-4 mt-2">
+                    <!-- Chlorine Level Gauge -->
+                    <div class="gauge-container">
+                        <div class="gauge-circle">
+                            <div class="gauge-inner-circle">
+                                <span id="chlorine-value" class="gauge-value"></span>
+                                <span class="gauge-label">Chlorine (ppm)</span>
+                            </div>
                         </div>
+                        <div id="chlorine-setpoint" class="mt-4 text-sm text-gray-400 text-center">Setpoint: -- ppm</div>
                     </div>
-                    <div class="mt-4 text-sm text-gray-400">Safe Range: 6.5-8.5</div>
+
+                    <!-- Turbidity Gauge -->
+                    <div class="gauge-container">
+                        <div class="gauge-circle">
+                            <div class="gauge-inner-circle">
+                                <span id="turbidity-value" class="gauge-value"></span>
+                                <span class="gauge-label">Turbidity (NTU)</span>
+                            </div>
+                        </div>
+                        <div id="turbidity-setpoint" class="mt-4 text-sm text-gray-400 text-center">Setpoint: -- NTU</div>
+                    </div>
                 </div>
             </div>
 
@@ -268,53 +312,161 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Global data store for all sites
-        const sites = {
-            "east-district": {
-                name: "East District",
-                tankLevel: 7.5,
-                pressure: 55,
-                ph: 7.2,
-                vfdFaultCode: 0,
-                motorPower: 5.0,
-                motorSpeed: 1500,
-                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
-                chartInstance: null
+        // Updated data structure to include zones and multiple pumping stations
+        const zones = {
+            "east-zone": {
+                name: "East Zone",
+                stations: {
+                    "east-station-1": {
+                        name: "Pumping Station 1",
+                        online: true, // New online status
+                        tankLevel: 75, // Now a percentage
+                        pressure: 57,
+                        groundWellLevel: 3500, // in mm
+                        motorWindingStatus: 0, // 0: Normal, 1: Warning, 2: Fault
+                        loadEnvelopeStatus: 0, // 0: Normal, 1: Warning, 2: Fault
+                        normalPressure: { min: 55, max: 59 }, // New: Pressure setpoint as a range
+                        chlorine: 2.1,
+                        normalChlorine: { min: 1.8, max: 2.2 }, // New: Chlorine setpoint as a range
+                        turbidity: 0.8,
+                        normalTurbidity: { min: 0.5, max: 0.9 }, // New: Turbidity setpoint as a range
+                        vfdFaultCode: 0,
+                        motorPower: 15.5,
+                        motorSpeed: 1500,
+                        flowRate: 0.045,
+                        flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                        pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
+                        flowChartInstance: null,
+                        pressureChartInstance: null
+                    },
+                    "east-station-2": {
+                        name: "Pumping Station 2",
+                        online: true,
+                        tankLevel: 52,
+                        pressure: 57,
+                        groundWellLevel: 2800,
+                        motorWindingStatus: 0,
+                        loadEnvelopeStatus: 0,
+                        normalPressure: { min: 55, max: 59 }, // Updated pressure setpoint for all sites
+                        chlorine: 1.8,
+                        normalChlorine: { min: 1.5, max: 2.0 },
+                        turbidity: 0.45,
+                        normalTurbidity: { min: 0.3, max: 0.6 },
+                        vfdFaultCode: 0,
+                        motorPower: 12.0,
+                        motorSpeed: 1800,
+                        flowRate: 0.032,
+                        flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                        pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
+                        flowChartInstance: null,
+                        pressureChartInstance: null
+                    },
+                    "east-station-3": {
+                        name: "Pumping Station 3",
+                        online: true, // Initially online
+                        tankLevel: 91,
+                        pressure: 57,
+                        groundWellLevel: 4100,
+                        motorWindingStatus: 0,
+                        loadEnvelopeStatus: 0,
+                        normalPressure: { min: 55, max: 59 }, // Updated pressure setpoint for all sites
+                        chlorine: 3.5,
+                        normalChlorine: { min: 3.0, max: 3.5 },
+                        turbidity: 0.6,
+                        normalTurbidity: { min: 0.6, max: 0.9 },
+                        vfdFaultCode: 10,
+                        motorPower: 18.2,
+                        motorSpeed: 1650,
+                        flowRate: 0.061,
+                        flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                        pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
+                        flowChartInstance: null,
+                        pressureChartInstance: null
+                    }
+                }
             },
-            "west-district": {
-                name: "West District",
-                tankLevel: 3.2,
-                pressure: 48,
-                ph: 6.8,
-                vfdFaultCode: 0,
-                motorPower: 7.5,
-                motorSpeed: 1800,
-                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
-                chartInstance: null
-            },
-            "north-district": {
-                name: "North District",
-                tankLevel: 9.1,
-                pressure: 62,
-                ph: 8.1,
-                vfdFaultCode: 0,
-                motorPower: 6.3,
-                motorSpeed: 1650,
-                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
-                chartInstance: null
-            },
-            "south-district": {
-                name: "South District",
-                tankLevel: 5.5,
-                pressure: 58,
-                ph: 7.5,
-                vfdFaultCode: 0,
-                motorPower: 8.0,
-                motorSpeed: 1900,
-                flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
-                chartInstance: null
+            "west-zone": {
+                name: "West Zone",
+                stations: {
+                    "west-station-1": {
+                        name: "Pumping Station 1",
+                        online: true,
+                        tankLevel: 32,
+                        pressure: 57,
+                        groundWellLevel: 1500,
+                        motorWindingStatus: 0,
+                        loadEnvelopeStatus: 0,
+                        normalPressure: { min: 55, max: 59 }, // Updated pressure setpoint for all sites
+                        chlorine: 2.5,
+                        normalChlorine: { min: 2.3, max: 2.8 },
+                        turbidity: 0.95,
+                        normalTurbidity: { min: 0.9, max: 1.2 },
+                        vfdFaultCode: 0,
+                        motorPower: 14.8,
+                        motorSpeed: 1900,
+                        flowRate: 0.055,
+                        flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                        pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
+                        flowChartInstance: null,
+                        pressureChartInstance: null
+                    },
+                    "west-station-2": {
+                        name: "Pumping Station 2",
+                        online: true,
+                        tankLevel: 15,
+                        pressure: 57,
+                        groundWellLevel: 4500,
+                        motorWindingStatus: 0,
+                        loadEnvelopeStatus: 0,
+                        normalPressure: { min: 55, max: 59 }, // Updated pressure setpoint for all sites
+                        chlorine: 0.7,
+                        normalChlorine: { min: 0.8, max: 1.2 },
+                        turbidity: 0.3,
+                        normalTurbidity: { min: 0.2, max: 0.4 },
+                        vfdFaultCode: 0,
+                        motorPower: 10.5,
+                        motorSpeed: 1750,
+                        flowRate: 0.021,
+                        flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                        pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
+                        flowChartInstance: null,
+                        pressureChartInstance: null
+                    },
+                    "west-station-3": {
+                        name: "Pumping Station 3",
+                        online: true,
+                        tankLevel: 85,
+                        pressure: 57,
+                        groundWellLevel: 3800,
+                        motorWindingStatus: 0,
+                        loadEnvelopeStatus: 0,
+                        normalPressure: { min: 55, max: 59 }, // Updated pressure setpoint for all sites
+                        chlorine: 3.9,
+                        normalChlorine: { min: 3.8, max: 4.2 },
+                        turbidity: 1.1,
+                        normalTurbidity: { min: 1.0, max: 1.2 },
+                        vfdFaultCode: 21,
+                        motorPower: 22.0,
+                        motorSpeed: 2100,
+                        flowRate: 0.088,
+                        flowRateData: Array.from({ length: 15 }, () => Math.random() * 0.05 + 0.02),
+                        pressureData: Array.from({ length: 15 }, () => 57 + (Math.random() * 2) - 1),
+                        flowChartInstance: null,
+                        pressureChartInstance: null
+                    }
+                }
             }
         };
+
+        // Helper function to find a station by its unique ID
+        function getStationById(stationId) {
+            for (const zoneId in zones) {
+                if (zones[zoneId].stations[stationId]) {
+                    return zones[zoneId].stations[stationId];
+                }
+            }
+            return null;
+        }
 
         const faultCodes = {
             0: "Normal Operation",
@@ -326,48 +478,114 @@
             89: "Communication Error"
         };
         
-        let activeSiteId = null;
+        const motorWindingStatusMap = {
+            0: { text: "Normal", colorClass: "status-dot-green", textColorClass: "text-green-400" },
+            1: { text: "Warning", colorClass: "status-dot-yellow", textColorClass: "text-yellow-400" },
+            2: { text: "Fault", colorClass: "status-dot-red", textColorClass: "text-red-400" }
+        };
+        
+        const loadEnvelopeStatusMap = {
+            0: { text: "Normal", colorClass: "status-dot-green", textColorClass: "text-green-400" },
+            1: { text: "Warning", colorClass: "status-dot-yellow", textColorClass: "text-yellow-400" },
+            2: { text: "Fault", colorClass: "status-dot-red", textColorClass: "text-red-400" }
+        };
+
+        const MAX_TANK_CAPACITY = 10000; // in cubic meters
+
+        let activeStationId = null; // Renamed from activeSiteId
+        let offlineStationId = null; // New variable to track the single offline station
 
         const commandCenterView = document.getElementById('command-center-view');
         const siteDashboardView = document.getElementById('site-dashboard-view');
-        const siteCardsContainer = document.getElementById('site-cards-container');
+        const zoneCardsContainer = document.getElementById('zone-cards-container'); // Renamed from siteCardsContainer
         const dashboardSiteName = document.getElementById('dashboard-site-name');
         const backButton = document.getElementById('back-button');
 
-        // Function to render the command center view
+        // Function to render the command center view with zones and stations
         function renderCommandCenter() {
             commandCenterView.classList.remove('hidden');
             siteDashboardView.classList.add('hidden');
-            siteCardsContainer.innerHTML = ''; // Clear existing cards
+            zoneCardsContainer.innerHTML = ''; // Clear existing cards
             
-            for (const siteId in sites) {
-                const site = sites[siteId];
-                const card = document.createElement('div');
-                card.className = 'panel site-card flex flex-col justify-center items-center text-center';
-                card.dataset.siteId = siteId;
-
-                let statusClass = 'status-dot-green';
-                let statusText = 'Normal';
-                if (site.vfdFaultCode !== 0) {
-                    statusClass = 'status-dot-red';
-                    statusText = 'Fault';
-                }
-
-                card.innerHTML = `
-                    <div class="panel-title">${site.name}</div>
-                    <p class="text-4xl font-bold">${site.tankLevel.toFixed(2)}</p>
-                    <p class="text-lg text-gray-400">cubic meters</p>
-                    <div class="mt-4 flex items-center text-lg font-semibold">
-                        <span class="status-dot ${statusClass}"></span>
-                        <span class="text-gray-300">${statusText}</span>
-                    </div>
+            for (const zoneId in zones) {
+                const zone = zones[zoneId];
+                
+                // Create a container for each zone
+                const zoneContainer = document.createElement('div');
+                zoneContainer.className = 'zone-container';
+                zoneContainer.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4 text-white">${zone.name}</h2>
+                    <div class="dashboard-container"></div>
                 `;
+                const stationsContainer = zoneContainer.querySelector('.dashboard-container');
 
-                card.addEventListener('click', () => {
-                    activeSiteId = siteId;
-                    renderSiteDashboard();
-                });
-                siteCardsContainer.appendChild(card);
+                for (const stationId in zone.stations) {
+                    const station = zone.stations[stationId];
+                    const card = document.createElement('div');
+                    card.className = 'panel site-card flex flex-col justify-between';
+                    card.dataset.stationId = stationId;
+
+                    let statusClass = 'status-dot-green';
+                    let statusText = 'Normal';
+                    if (station.vfdFaultCode !== 0) {
+                        statusClass = 'status-dot-red';
+                        statusText = 'Fault';
+                    }
+
+                    // Determine online/offline status
+                    const onlineStatusDotClass = station.online ? 'status-dot-green' : 'status-dot-red';
+                    const onlineStatusText = station.online ? 'Online' : 'Offline';
+
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div class="panel-title">${station.name}</div>
+                            <div class="flex items-center text-sm font-medium">
+                                <span class="status-dot ${onlineStatusDotClass}"></span>
+                                <span>${onlineStatusText}</span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mt-4">
+                            <!-- Power -->
+                            <div class="metric-item">
+                                <span class="metric-label">Power</span>
+                                <span class="metric-value">${station.motorPower.toFixed(1)}</span>
+                                <span class="metric-unit">kW</span>
+                            </div>
+                            <!-- Flow Rate -->
+                            <div class="metric-item">
+                                <span class="metric-label">Flow Rate</span>
+                                <span class="metric-value">${station.flowRate.toFixed(2)}</span>
+                                <span class="metric-unit">m³/min</span>
+                            </div>
+                            <!-- VFD Status -->
+                            <div class="metric-item">
+                                <span class="metric-label">VFD Status</span>
+                                <span class="flex items-center text-lg font-medium mt-1">
+                                    <span class="status-dot w-3 h-3 ${statusClass}"></span>
+                                    <span>${statusText}</span>
+                                </span>
+                            </div>
+                            <!-- Tank Level % -->
+                            <div class="metric-item">
+                                <span class="metric-label">Tank Level</span>
+                                <span class="metric-value">${station.tankLevel.toFixed(0)}</span>
+                                <span class="metric-unit">%</span>
+                            </div>
+                        </div>
+                    `;
+                    // If the station is offline, disable the click event
+                    if (station.online) {
+                        card.addEventListener('click', () => {
+                            activeStationId = stationId;
+                            renderSiteDashboard();
+                        });
+                    } else {
+                        card.style.opacity = 0.5; // Visually indicate it's offline
+                        card.style.cursor = 'not-allowed';
+                    }
+                    stationsContainer.appendChild(card);
+                }
+                zoneCardsContainer.appendChild(zoneContainer);
             }
         }
 
@@ -375,27 +593,41 @@
         function renderSiteDashboard() {
             commandCenterView.classList.add('hidden');
             siteDashboardView.classList.remove('hidden');
-            dashboardSiteName.textContent = sites[activeSiteId].name;
-            
-            // Re-initialize chart for the new site
-            if (sites[activeSiteId].chartInstance) {
-                sites[activeSiteId].chartInstance.destroy();
-                sites[activeSiteId].chartInstance = null;
+
+            const station = getStationById(activeStationId);
+            if (station) {
+                dashboardSiteName.textContent = station.name;
+                
+                // Re-initialize chart for the new station
+                if (station.flowChartInstance) {
+                    station.flowChartInstance.destroy();
+                    station.flowChartInstance = null;
+                }
+                if (station.pressureChartInstance) {
+                    station.pressureChartInstance.destroy();
+                    station.pressureChartInstance = null;
+                }
+                initializeFlowRateChart(activeStationId);
+                initializePressureChart(activeStationId); // Initialize the new pressure chart
+                updateDashboard(activeStationId);
             }
-            initializeFlowRateChart(activeSiteId);
-            updateDashboard(activeSiteId);
         }
 
         // Function to update the tank level display for a specific site
-        function updateTankLevel(siteId) {
-            const site = sites[siteId];
+        function updateTankLevel(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
+            
             const levelFill = document.getElementById('tank-level-fill');
             const levelValue = document.getElementById('tank-level-value');
             const levelStatus = document.getElementById('tank-level-status');
-            const percentage = (site.tankLevel / 10) * 100;
+            const percentage = station.tankLevel;
+            const cubicMeters = (percentage / 100) * MAX_TANK_CAPACITY;
+            
             levelFill.style.height = `${percentage}%`;
-            levelValue.textContent = `${site.tankLevel.toFixed(2)}`;
-
+            levelValue.textContent = `${cubicMeters.toFixed(1)}`; // Display cubic meters
+            
+            // Adjust status text based on percentage
             if (percentage < 20) {
                 levelStatus.textContent = "Low Level";
                 levelStatus.classList.remove('text-green-400', 'text-yellow-400');
@@ -411,45 +643,89 @@
             }
         }
 
-        // Function to update the gauges (Pressure and pH) for a specific site
-        function updateGauges(siteId) {
-            const site = sites[siteId];
-            const pressureValue = document.getElementById('pressure-value');
-            const phValue = document.getElementById('ph-value');
-            pressureValue.textContent = site.pressure.toFixed(1);
-            phValue.textContent = site.ph.toFixed(1);
+        // Function to update the gauges (Chlorine and Turbidity) for a specific site
+        function updateWaterQualityGauges(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
+            
+            // Update Chlorine Gauge
+            const chlorineValueEl = document.getElementById('chlorine-value');
+            const chlorineSetpointEl = document.getElementById('chlorine-setpoint');
+            chlorineValueEl.textContent = station.chlorine.toFixed(2);
+            chlorineSetpointEl.textContent = `Setpoint: ${station.normalChlorine.min.toFixed(2)} - ${station.normalChlorine.max.toFixed(2)} ppm`;
+            
+            const chlorineIsOptimal = station.chlorine >= station.normalChlorine.min && station.chlorine <= station.normalChlorine.max;
+            chlorineValueEl.classList.remove('text-green-400', 'text-red-400', 'text-yellow-400');
+            if (chlorineIsOptimal) {
+                chlorineValueEl.classList.add('text-green-400');
+            } else {
+                chlorineValueEl.classList.add('text-red-400');
+            }
+
+            // Update Turbidity Gauge
+            const turbidityValueEl = document.getElementById('turbidity-value');
+            const turbiditySetpointEl = document.getElementById('turbidity-setpoint');
+            turbidityValueEl.textContent = station.turbidity.toFixed(2);
+            turbiditySetpointEl.textContent = `Setpoint: ${station.normalTurbidity.min.toFixed(2)} - ${station.normalTurbidity.max.toFixed(2)} NTU`;
+
+            const turbidityIsOptimal = station.turbidity >= station.normalTurbidity.min && station.turbidity <= station.normalTurbidity.max;
+            turbidityValueEl.classList.remove('text-green-400', 'text-red-400', 'text-yellow-400');
+            if (turbidityIsOptimal) {
+                turbidityValueEl.classList.add('text-green-400');
+            } else {
+                turbidityValueEl.classList.add('text-red-400');
+            }
         }
 
+
         // Function to update pump status for a specific site
-        function updatePumpStatus(siteId) {
-            // Logic remains the same, but it's part of the dashboard view now
-            const pumps = [
-                { id: 'pump-main', status: Math.random() > 0.1 ? 'ON' : 'OFF' },
-                { id: 'pump-booster', status: Math.random() > 0.3 ? 'ON' : 'OFF' },
-                { id: 'pump-filter', status: Math.random() > 0.2 ? 'ON' : 'OFF' }
-            ];
+        function updatePumpStatus(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
 
-            pumps.forEach(pump => {
-                const dot = document.getElementById(`${pump.id}-dot`);
-                const status = document.getElementById(`${pump.id}-status`);
-                status.textContent = pump.status;
+            // Ground Well Level
+            const wellLevelValue = document.getElementById('well-level-value');
+            const wellLevelDot = document.getElementById('well-level-dot');
+            const level = station.groundWellLevel;
+            wellLevelValue.textContent = level.toFixed(0);
+            wellLevelDot.classList.remove('status-dot-green', 'status-dot-yellow', 'status-dot-red');
+            wellLevelValue.classList.remove('text-green-400', 'text-yellow-400', 'text-red-400');
+            if (level < 2000) {
+                wellLevelDot.classList.add('status-dot-red');
+                wellLevelValue.classList.add('text-red-400');
+            } else if (level > 4000) {
+                wellLevelDot.classList.add('status-dot-yellow');
+                wellLevelValue.classList.add('text-yellow-400');
+            } else {
+                wellLevelDot.classList.add('status-dot-green');
+                wellLevelValue.classList.add('text-green-400');
+            }
 
-                dot.classList.remove('status-dot-green', 'status-dot-red');
-                if (pump.status === 'ON') {
-                    dot.classList.add('status-dot-green');
-                    status.classList.remove('text-red-400');
-                    status.classList.add('text-green-400');
-                } else {
-                    dot.classList.add('status-dot-red');
-                    status.classList.remove('text-green-400');
-                    status.classList.add('text-red-400');
-                }
-            });
+            // Motor Winding Insulation
+            const insulationStatusEl = document.getElementById('insulation-status');
+            const insulationDot = document.getElementById('insulation-dot');
+            const insulationStatus = motorWindingStatusMap[station.motorWindingStatus];
+            insulationStatusEl.textContent = insulationStatus.text;
+            insulationDot.classList.remove('status-dot-green', 'status-dot-yellow', 'status-dot-red');
+            insulationStatusEl.classList.remove('text-green-400', 'text-yellow-400', 'text-red-400');
+            insulationDot.classList.add(insulationStatus.colorClass);
+            insulationStatusEl.classList.add(insulationStatus.textColorClass);
+
+            // Load Envelop
+            const loadStatusEl = document.getElementById('load-status');
+            const loadDot = document.getElementById('load-dot');
+            const loadStatus = loadEnvelopeStatusMap[station.loadEnvelopeStatus];
+            loadStatusEl.textContent = loadStatus.text;
+            loadDot.classList.remove('status-dot-green', 'status-dot-yellow', 'status-dot-red');
+            loadStatusEl.classList.remove('text-green-400', 'text-yellow-400', 'text-red-400');
+            loadDot.classList.add(loadStatus.colorClass);
+            loadStatusEl.classList.add(loadStatus.textColorClass);
         }
 
         // Function to update VFD Fault Status and other data for a specific site
-        function updateVfdStatus(siteId) {
-            const site = sites[siteId];
+        function updateVfdStatus(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
             const vfdCode = document.getElementById('vfd-code');
             const vfdMessage = document.getElementById('vfd-message');
             const vfdDescription = document.getElementById('vfd-description');
@@ -458,12 +734,12 @@
             const motorSpeedValue = document.getElementById('motor-speed-value');
 
             // Update VFD fault display
-            vfdCode.textContent = site.vfdFaultCode;
-            vfdDescription.textContent = faultCodes[site.vfdFaultCode] || "Unknown Fault";
+            vfdCode.textContent = station.vfdFaultCode;
+            vfdDescription.textContent = faultCodes[station.vfdFaultCode] || "Unknown Fault";
             vfdDot.classList.remove('status-dot-green', 'status-dot-red');
             vfdMessage.classList.remove('text-green-400', 'text-red-400');
 
-            if (site.vfdFaultCode === 0) {
+            if (station.vfdFaultCode === 0) {
                 vfdMessage.textContent = "No Fault";
                 vfdDot.classList.add('status-dot-green');
                 vfdMessage.classList.add('text-green-400');
@@ -474,31 +750,32 @@
             }
 
             // Update motor power and speed display
-            motorPowerValue.textContent = site.motorPower.toFixed(2);
-            motorSpeedValue.textContent = site.motorSpeed;
+            motorPowerValue.textContent = station.motorPower.toFixed(2);
+            motorSpeedValue.textContent = station.motorSpeed;
         }
         
         // Update all panels for a specific site
-        function updateDashboard(siteId) {
-            updateTankLevel(siteId);
-            updateGauges(siteId);
-            updatePumpStatus(siteId);
-            updateVfdStatus(siteId);
+        function updateDashboard(stationId) {
+            updateTankLevel(stationId);
+            updateWaterQualityGauges(stationId);
+            updatePumpStatus(stationId);
+            updateVfdStatus(stationId);
         }
 
         // Initialize the flow rate chart
-        function initializeFlowRateChart(siteId) {
-            const site = sites[siteId];
+        function initializeFlowRateChart(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
             const ctx = document.getElementById('flow-rate-chart').getContext('2d');
             const timeLabels = Array.from({ length: 15 }, (_, i) => `${i * 5} sec ago`);
 
-            site.chartInstance = new Chart(ctx, {
+            station.flowChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: timeLabels,
                     datasets: [{
-                        label: 'Flow Rate ($m^3$/min)',
-                        data: site.flowRateData,
+                        label: 'Water Flow Rate (m³/min)',
+                        data: station.flowRateData,
                         borderColor: '#4da6ff',
                         backgroundColor: 'rgba(77, 166, 255, 0.2)',
                         borderWidth: 2,
@@ -523,7 +800,13 @@
                         }
                     },
                     plugins: {
-                        legend: { display: false },
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#e0e0e0',
+                                boxWidth: 20
+                            }
+                        },
                         tooltip: { enabled: true, callbacks: {
                                 label: function(context) {
                                     let label = context.dataset.label || '';
@@ -537,56 +820,207 @@
                 }
             });
         }
+        
+        // Initialize the new pressure chart
+        function initializePressureChart(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
+            const ctx = document.getElementById('pressure-chart').getContext('2d');
+            const timeLabels = Array.from({ length: 15 }, (_, i) => `${i * 5} sec ago`);
+            
+            station.pressureChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'System Pressure (psi)',
+                        data: station.pressureData,
+                        borderColor: '#4ade80',
+                        backgroundColor: 'rgba(74, 222, 128, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                        pointRadius: 0,
+                        tension: 0.3
+                    },
+                    // Setpoint Min Line
+                    {
+                        label: 'Setpoint Min',
+                        data: Array(timeLabels.length).fill(station.normalPressure.min),
+                        borderColor: '#facc15',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointRadius: 0,
+                        tension: 0
+                    },
+                    // Setpoint Max Line
+                    {
+                        label: 'Setpoint Max',
+                        data: Array(timeLabels.length).fill(station.normalPressure.max),
+                        borderColor: '#facc15',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: '-1', // Fill the area between this dataset and the previous one
+                        backgroundColor: 'rgba(250, 204, 21, 0.1)', // Optional fill color for the range
+                        pointRadius: 0,
+                        tension: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            display: false,
+                            grid: { color: '#3f4147' }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            min: 50,
+                            max: 65,
+                            grid: { color: '#3f4147' },
+                            ticks: { color: '#a0a0a0' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            labels: {
+                                color: '#e0e0e0',
+                                boxWidth: 20
+                            }
+                        },
+                        tooltip: {
+                            enabled: true,
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) { label += context.parsed.y.toFixed(2); }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         // Function to update the flow rate chart with new data
-        function updateFlowRateChart(siteId) {
-            const site = sites[siteId];
+        function updateFlowRateChart(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
             const newData = Math.random() * 0.05 + 0.02;
-            site.flowRateData.push(newData);
-            site.flowRateData.shift();
-            if (site.chartInstance) {
-                site.chartInstance.update();
+            station.flowRateData.push(newData);
+            station.flowRateData.shift();
+            if (station.flowChartInstance) {
+                station.flowChartInstance.update();
+            }
+        }
+        
+        // Function to update the pressure chart with new data
+        function updatePressureChart(stationId) {
+            const station = getStationById(stationId);
+            if (!station) return;
+            // Generate less volatile pressure data
+            const newData = station.pressure + (Math.random() * 2) - 1;
+            station.pressure = Math.max(station.normalPressure.min - 1, Math.min(station.normalPressure.max + 1, newData));
+            station.pressureData.push(station.pressure);
+            station.pressureData.shift();
+            
+            if (station.pressureChartInstance) {
+                station.pressureChartInstance.data.datasets[0].data = station.pressureData;
+                station.pressureChartInstance.update();
             }
         }
         
         // Simulate real-time data updates for all sites
         function simulateAllData() {
-            for (const siteId in sites) {
-                const site = sites[siteId];
-                // Randomly change values
-                site.tankLevel += (Math.random() * 0.5) - 0.25;
-                site.tankLevel = Math.max(0, Math.min(10, site.tankLevel));
+            // First, check if a station is currently offline
+            if (offlineStationId) {
+                const station = getStationById(offlineStationId);
+                // 50% chance for the offline station to come back online
+                if (Math.random() < 0.5) {
+                    station.online = true;
+                    offlineStationId = null;
+                }
+            } else {
+                // If no station is offline, check if one should go offline with a low probability
+                const allStationIds = Object.values(zones).flatMap(zone => Object.keys(zone.stations));
+                if (Math.random() < 0.005) { // 0.5% chance
+                    const randomIndex = Math.floor(Math.random() * allStationIds.length);
+                    const stationIdToTakeOffline = allStationIds[randomIndex];
+                    const station = getStationById(stationIdToTakeOffline);
+                    station.online = false;
+                    offlineStationId = stationIdToTakeOffline;
+                }
+            }
 
-                site.pressure += (Math.random() * 5) - 2.5;
-                site.pressure = Math.max(0, Math.min(100, site.pressure));
+            // Loop through all stations to update their data regardless of online status
+            for (const zoneId in zones) {
+                const zone = zones[zoneId];
+                for (const stationId in zone.stations) {
+                    const station = zone.stations[stationId];
+                    
+                    // Only update data for online stations
+                    if (!station.online) continue;
 
-                site.ph += (Math.random() * 0.2) - 0.1;
-                site.ph = Math.max(6, Math.min(9, site.ph));
+                    // Randomly change values for each station
+                    station.tankLevel += (Math.random() * 5) - 2.5;
+                    station.tankLevel = Math.max(0, Math.min(100, station.tankLevel));
 
-                // Randomly add a fault
-                const faultCodesList = Object.keys(faultCodes);
-                const randomIndex = Math.floor(Math.random() * (faultCodesList.length + 10)); // Higher chance of no fault
-                site.vfdFaultCode = randomIndex < faultCodesList.length ? parseInt(faultCodesList[randomIndex], 10) : 0;
-                
-                // Randomly change motor power and speed
-                site.motorPower = (Math.random() * 20) + 5;
-                site.motorSpeed = Math.floor(Math.random() * 1000) + 1000;
-                
-                // Update flow rate data
-                updateFlowRateChart(siteId);
+                    // Update Chlorine level with a smaller random change
+                    station.chlorine += (Math.random() * 0.2) - 0.1;
+                    station.chlorine = Math.max(0, Math.min(5.0, station.chlorine));
+                    
+                    // Update Turbidity level with a smaller random change
+                    station.turbidity += (Math.random() * 0.1) - 0.05;
+                    station.turbidity = Math.max(0, Math.min(2.0, station.turbidity));
+
+                    // Update Ground Well Level
+                    station.groundWellLevel += (Math.random() * 200) - 100;
+                    station.groundWellLevel = Math.max(1000, Math.min(5000, station.groundWellLevel));
+                    
+                    // Update Motor Winding and Load Envelope Statuses
+                    if (Math.random() < 0.05) { // 5% chance of status change
+                        station.motorWindingStatus = Math.floor(Math.random() * 3);
+                    }
+                    if (Math.random() < 0.05) { // 5% chance of status change
+                        station.loadEnvelopeStatus = Math.floor(Math.random() * 3);
+                    }
+                    
+                    // Randomly change motor power and speed
+                    station.motorPower = (Math.random() * 20) + 5;
+                    station.motorSpeed = Math.floor(Math.random() * 1000) + 1000;
+                    
+                    // Update chart data
+                    updateFlowRateChart(stationId);
+                    updatePressureChart(stationId);
+
+                    // Add a random chance of a fault
+                    if (Math.random() < 0.02) { // 2% chance of a fault
+                        const faultCodesList = Object.keys(faultCodes).filter(code => parseInt(code, 10) !== 0);
+                        const randomFaultCode = faultCodesList[Math.floor(Math.random() * faultCodesList.length)];
+                        station.vfdFaultCode = parseInt(randomFaultCode, 10);
+                    } else {
+                        station.vfdFaultCode = 0; // Clear the fault
+                    }
+                }
             }
             
             // Re-render the active view
-            if (activeSiteId === null) {
+            if (activeStationId === null) {
                 renderCommandCenter();
             } else {
-                updateDashboard(activeSiteId);
+                updateDashboard(activeStationId);
             }
         }
 
         // Event listener for the back button
         backButton.addEventListener('click', () => {
-            activeSiteId = null;
+            activeStationId = null;
             renderCommandCenter();
         });
 
