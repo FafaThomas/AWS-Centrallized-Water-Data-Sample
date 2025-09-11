@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>February 2025 East Zone Performance Report</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>East Zone Performance Report</title>
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f3f4f6;
+        }
+        @media print {
+            @page {
+                size: A4 portrait;
+                scale: 55%;
+            }
         }
         .report-section {
             background-color: #ffffff;
@@ -30,24 +31,25 @@
             font-weight: 500;
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="p-6 md:p-10">
 
     <!-- Report Header -->
     <header class="text-center mb-10">
-        <h1 class="text-4xl font-bold text-gray-800">East Zone Performance Report</h1>
-        <p class="text-gray-500 mt-2 text-lg">Detailed Report for the Month of February 2025</p>
+        <h1 id="report-title" class="text-4xl font-bold text-gray-800">East Zone Performance Report</h1>
+        <p id="report-subtitle" class="text-gray-500 mt-2 text-lg">Detailed Report for the Month of </p>
     </header>
 
     <main class="max-w-7xl mx-auto space-y-10">
         <!-- Executive Summary -->
         <section class="report-section">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
-            <p class="text-gray-600 leading-relaxed">
-                The East Zone demonstrated solid performance in February 2025, with a combined system input volume of 31,400 $m^3$.
-                The overall Non-Revenue Water (NRW) percentage for the zone averaged 22.33%, indicating continued
-                efficiency in water management. Pump Station C maintained the lowest NRW at 16%, while Pump Station B
-                had the highest at 28%. The total billed consumption for the month reached 24,494 $m^3$.
+            <p id="executive-summary" class="text-gray-600 leading-relaxed">
             </p>
         </section>
 
@@ -57,7 +59,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-8">
                 <div>
-                    <h3 class="text-xl font-medium text-gray-800 mb-4">Key Metrics - February 2025</h3>
+                    <h3 class="text-xl font-medium text-gray-800 mb-4" id="total-metrics-title">Key Metrics</h3>
                     <table class="w-full report-table rounded-lg overflow-hidden">
                         <thead>
                             <tr class="bg-gray-50">
@@ -68,19 +70,19 @@
                         <tbody>
                             <tr>
                                 <td>System Input Volume ($m^3$)</td>
-                                <td class="text-right">31,400</td>
+                                <td class="text-right" id="total-volume"></td>
                             </tr>
                             <tr>
                                 <td>Billed Consumption ($m^3$)</td>
-                                <td class="text-right">24,494</td>
+                                <td class="text-right" id="total-billed"></td>
                             </tr>
                             <tr>
                                 <td>Energy Consumption (kWh)</td>
-                                <td class="text-right">17,700</td>
+                                <td class="text-right" id="total-energy"></td>
                             </tr>
                             <tr>
                                 <td>NRW %</td>
-                                <td class="text-right">22.33%</td>
+                                <td class="text-right" id="total-nrw"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -101,10 +103,10 @@
                     <h3 class="text-xl font-medium text-gray-800 mb-4">Pump Station A</h3>
                     <table class="w-full report-table">
                         <tbody>
-                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right">11,800</td></tr>
-                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right">9,086</td></tr>
-                            <tr><td>Energy Consumption (kWh)</td><td class="text-right">6,200</td></tr>
-                            <tr><td>NRW %</td><td class="text-right">23.00%</td></tr>
+                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right" id="psa-volume"></td></tr>
+                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right" id="psa-billed"></td></tr>
+                            <tr><td>Energy Consumption (kWh)</td><td class="text-right" id="psa-energy"></td></tr>
+                            <tr><td>NRW %</td><td class="text-right" id="psa-nrw"></td></tr>
                         </tbody>
                     </table>
                     <div class="h-60 mt-4">
@@ -117,10 +119,10 @@
                     <h3 class="text-xl font-medium text-gray-800 mb-4">Pump Station B</h3>
                     <table class="w-full report-table">
                         <tbody>
-                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right">8,800</td></tr>
-                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right">6,336</td></tr>
-                            <tr><td>Energy Consumption (kWh)</td><td class="text-right">4,200</td></tr>
-                            <tr><td>NRW %</td><td class="text-right">28.00%</td></tr>
+                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right" id="psb-volume"></td></tr>
+                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right" id="psb-billed"></td></tr>
+                            <tr><td>Energy Consumption (kWh)</td><td class="text-right" id="psb-energy"></td></tr>
+                            <tr><td>NRW %</td><td class="text-right" id="psb-nrw"></td></tr>
                         </tbody>
                     </table>
                     <div class="h-60 mt-4">
@@ -133,10 +135,10 @@
                     <h3 class="text-xl font-medium text-gray-800 mb-4">Pump Station C</h3>
                     <table class="w-full report-table">
                         <tbody>
-                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right">10,800</td></tr>
-                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right">9,072</td></tr>
-                            <tr><td>Energy Consumption (kWh)</td><td class="text-right">7,300</td></tr>
-                            <tr><td>NRW %</td><td class="text-right">16.00%</td></tr>
+                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right" id="psc-volume"></td></tr>
+                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right" id="psc-billed"></td></tr>
+                            <tr><td>Energy Consumption (kWh)</td><td class="text-right" id="psc-energy"></td></tr>
+                            <tr><td>NRW %</td><td class="text-right" id="psc-nrw"></td></tr>
                         </tbody>
                     </table>
                     <div class="h-60 mt-4">
@@ -150,15 +152,108 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
+            // --- LOCAL DATA COPY ---
+            // This is a copy of the data from the dashboard to avoid long URL parameters
+            const fullMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             const combinedData = {
-                ps_a: { volume: 11800, billed: 9086, energy: 6200, nrw: 23 },
-                ps_b: { volume: 8800, billed: 6336, energy: 4200, nrw: 28 },
-                ps_c: { volume: 10800, billed: 9072, energy: 7300, nrw: 16 }
+                ps_a: {
+                    energy: [6500, 6200, 6000, 6400, 6300, 6600, 6500, 6200, 6100, 5900, 5800, 5700],
+                    volume: [12000, 11800, 11500, 12200, 12100, 12500, 12300, 11900, 11700, 11600, 11800, 11900]
+                },
+                ps_b: {
+                    energy: [4500, 4200, 4000, 4400, 4300, 4600, 4500, 4200, 4100, 3900, 3800, 3700],
+                    volume: [9000, 8800, 8500, 9200, 9100, 9500, 9300, 8900, 8700, 8600, 8800, 8900]
+                },
+                ps_c: {
+                    energy: [7500, 7300, 7400, 7600, 7550, 7450, 7400, 7200, 7100, 7000, 6900, 6800],
+                    volume: [11000, 10800, 10900, 11100, 11050, 10950, 10850, 10700, 10600, 10500, 10400, 10300]
+                }
+            };
+            const nrwData = {
+                ps_a: [25, 23, 22, 24, 23, 26, 25, 23, 21, 20, 19, 18],
+                ps_b: [30, 28, 27, 29, 28, 31, 30, 28, 26, 25, 24, 23],
+                ps_c: [15, 16, 17, 15, 14, 16, 15, 14, 13, 12, 11, 10]
+            };
+            const billedData = {
+                ps_a: combinedData.ps_a.volume.map((vol, i) => vol * (1 - nrwData.ps_a[i] / 100)),
+                ps_b: combinedData.ps_b.volume.map((vol, i) => vol * (1 - nrwData.ps_b[i] / 100)),
+                ps_c: combinedData.ps_c.volume.map((vol, i) => vol * (1 - nrwData.ps_c[i] / 100))
+            };
+            // --- END LOCAL DATA COPY ---
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const monthIndex = parseInt(urlParams.get('monthIndex'));
+            
+            if (isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) {
+                // If there is no valid month index, display an error and exit
+                document.body.innerHTML = `
+                    <div class="flex items-center justify-center h-screen bg-red-100">
+                        <div class="text-center p-6 rounded-xl bg-white shadow-lg">
+                            <h1 class="text-2xl font-bold text-red-600 mb-4">Error: No Report Data Found</h1>
+                            <p class="text-gray-600">Please generate the report from the dashboard page.</p>
+                            <button onclick="window.close()" class="mt-4 bg-red-600 text-white py-2 px-4 rounded-full">OK</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Extract the specific month's data
+            const monthName = fullMonths[monthIndex];
+            const psAData = {
+                volume: combinedData.ps_a.volume[monthIndex],
+                billed: billedData.ps_a[monthIndex],
+                energy: combinedData.ps_a.energy[monthIndex],
+                nrw: nrwData.ps_a[monthIndex]
+            };
+            const psBData = {
+                volume: combinedData.ps_b.volume[monthIndex],
+                billed: billedData.ps_b[monthIndex],
+                energy: combinedData.ps_b.energy[monthIndex],
+                nrw: nrwData.ps_b[monthIndex]
+            };
+            const psCData = {
+                volume: combinedData.ps_c.volume[monthIndex],
+                billed: billedData.ps_c[monthIndex],
+                energy: combinedData.ps_c.energy[monthIndex],
+                nrw: nrwData.ps_c[monthIndex]
             };
 
-            const totalVolume = combinedData.ps_a.volume + combinedData.ps_b.volume + combinedData.ps_c.volume;
-            const totalBilled = combinedData.ps_a.billed + combinedData.ps_b.billed + combinedData.ps_c.billed;
-            const totalNRW = ((combinedData.ps_a.nrw + combinedData.ps_b.nrw + combinedData.ps_c.nrw) / 3).toFixed(2);
+            const totalVolume = psAData.volume + psBData.volume + psCData.volume;
+            const totalBilled = psAData.billed + psBData.billed + psCData.billed;
+            const totalEnergy = psAData.energy + psBData.energy + psCData.energy;
+            const totalNRW = ((psAData.nrw + psBData.nrw + psCData.nrw) / 3).toFixed(2);
+            
+            const summary = `The East Zone demonstrated solid performance in ${monthName}, with a combined system input volume of ${totalVolume.toLocaleString()} $m^3$. The overall Non-Revenue Water (NRW) percentage for the zone averaged ${totalNRW}%, indicating continued efficiency in water management. Pump Station C maintained the lowest NRW at ${psCData.nrw}%, while Pump Station B had the highest at ${psBData.nrw}%. The total billed consumption for the month reached ${totalBilled.toLocaleString()} $m^3$.`;
+
+
+            // Update report content with the dynamic data
+            document.getElementById('report-title').textContent = `${monthName} East Zone Performance Report`;
+            document.getElementById('report-subtitle').textContent = `Detailed Report for the Month of ${monthName}`;
+            document.getElementById('executive-summary').textContent = summary;
+            document.getElementById('total-metrics-title').textContent = `Key Metrics - ${monthName}`;
+            
+            // Update table values for total performance
+            document.getElementById('total-volume').textContent = totalVolume.toLocaleString();
+            document.getElementById('total-billed').textContent = totalBilled.toLocaleString();
+            document.getElementById('total-energy').textContent = totalEnergy.toLocaleString();
+            document.getElementById('total-nrw').textContent = `${totalNRW}%`;
+            
+            // Update table values for each pump station
+            document.getElementById('psa-volume').textContent = psAData.volume.toLocaleString();
+            document.getElementById('psa-billed').textContent = psAData.billed.toLocaleString();
+            document.getElementById('psa-energy').textContent = psAData.energy.toLocaleString();
+            document.getElementById('psa-nrw').textContent = `${psAData.nrw.toFixed(2)}%`;
+            
+            document.getElementById('psb-volume').textContent = psBData.volume.toLocaleString();
+            document.getElementById('psb-billed').textContent = psBData.billed.toLocaleString();
+            document.getElementById('psb-energy').textContent = psBData.energy.toLocaleString();
+            document.getElementById('psb-nrw').textContent = `${psBData.nrw.toFixed(2)}%`;
+            
+            document.getElementById('psc-volume').textContent = psCData.volume.toLocaleString();
+            document.getElementById('psc-billed').textContent = psCData.billed.toLocaleString();
+            document.getElementById('psc-energy').textContent = psCData.energy.toLocaleString();
+            document.getElementById('psc-nrw').textContent = `${psCData.nrw.toFixed(2)}%`;
 
             const createChart = (canvasId, volume, billed, nrw) => {
                 const ctx = document.getElementById(canvasId).getContext('2d');
@@ -203,7 +298,7 @@
                             tooltip: {
                                 callbacks: {
                                     title: function() {
-                                        return 'February 2025';
+                                        return monthName;
                                     }
                                 }
                             }
@@ -215,7 +310,7 @@
                                 position: 'left',
                                 ticks: {
                                     color: '#6b7280',
-                                    callback: function(value) { return value + ' m³'; }
+                                    callback: function(value) { return value + ' $m^3$'; }
                                 },
                                 title: { display: true, text: 'Volume' }
                             },
@@ -240,10 +335,16 @@
             };
 
             // Create charts for each section
-            createChart('combinedChart', totalVolume, totalBilled, totalNRW);
-            createChart('psAChart', combinedData.ps_a.volume, combinedData.ps_a.billed, combinedData.ps_a.nrw);
-            createChart('psBChart', combinedData.ps_b.volume, combinedData.ps_b.billed, combinedData.ps_b.nrw);
-            createChart('psCChart', combinedData.ps_c.volume, combinedData.ps_c.billed, combinedData.ps_c.nrw);
+            createChart('combinedChart', totalVolume, totalBilled, parseFloat(totalNRW));
+            createChart('psAChart', psAData.volume, psAData.billed, psAData.nrw);
+            createChart('psBChart', psBData.volume, psBData.billed, psBData.nrw);
+            createChart('psCChart', psCData.volume, psCData.billed, psCData.nrw);
+            
+            // A small delay to ensure charts are rendered before printing
+            setTimeout(() => {
+                window.print();
+                window.close();
+            }, 1000);
         });
     </script>
 </body>

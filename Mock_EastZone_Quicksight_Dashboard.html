@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>East Zone Dashboard</title>
-    <link href="./dist/output.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,14 +20,46 @@
 <body class="p-6 md:p-10">
 
     <!-- Dashboard Header -->
-    <header class="bg-white p-6 rounded-xl shadow-md mb-6 flex items-center justify-between">
+    <header class="bg-white p-6 rounded-xl shadow-md mb-6 flex items-center justify-between flex-wrap gap-4">
         <div>
             <h1 class="text-3xl font-bold text-gray-800">East Zone Dashboard</h1>
             <p class="text-gray-500 mt-1">Key Performance Indicators for Water Management</p>
         </div>
-        <a href="index.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">
-            Home
-        </a>
+        <div class="flex items-center space-x-4">
+            <!-- Month Dropdown -->
+            <select id="month-select" class="bg-gray-100 rounded-lg p-2 text-gray-700 font-medium border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+                <option value="0">January</option>
+                <option value="1">February</option>
+                <option value="2">March</option>
+                <option value="3">April</option>
+                <option value="4">May</option>
+                <option value="5">June</option>
+                <option value="6">July</option>
+                <option value="7">August</option>
+                <option value="8">September</option>
+                <option value="9">October</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
+            </select>
+
+            <!-- Location Dropdown -->
+            <select id="location-select" class="bg-gray-100 rounded-lg p-2 text-gray-700 font-medium border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300">
+                <option value="East Zone">East Zone</option>
+                <option value="Pumping Station 1">Pumping Station 1</option>
+                <option value="Pumping Station 2">Pumping Station 2</option>
+                <option value="Pumping Station 3">Pumping Station 3</option>
+            </select>
+
+            <!-- Generate Report Button -->
+            <button id="generate-report-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-full transition duration-300">
+                Generate Report
+            </button>
+
+            <!-- Home Button -->
+            <a href="index.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-6 rounded-full transition duration-300">
+                Home
+            </a>
+        </div>
     </header>
 
     <main class="space-y-6">
@@ -46,7 +78,7 @@
 
             <!-- Pump Station A Chart -->
             <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station A</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station 1</h2>
                 <div class="relative flex-grow">
                     <canvas id="pumpStationAChart"></canvas>
                 </div>
@@ -54,7 +86,7 @@
 
             <!-- Pump Station B Chart -->
             <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station B</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station 2</h2>
                 <div class="relative flex-grow">
                     <canvas id="pumpStationBChart"></canvas>
                 </div>
@@ -62,7 +94,7 @@
 
             <!-- Pump Station C Chart -->
             <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station C</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly Performance - Pump Station 3</h2>
                 <div class="relative flex-grow">
                     <canvas id="pumpStationCChart"></canvas>
                 </div>
@@ -83,7 +115,7 @@
 
             <!-- Pump Station A System Chart -->
             <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly System Performance - Pump Station A</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly System Performance - Pump Station 1</h2>
                 <div class="relative flex-grow">
                     <canvas id="pumpStationASystemChart"></canvas>
                 </div>
@@ -91,7 +123,7 @@
 
             <!-- Pump Station B System Chart -->
             <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly System Performance - Pump Station B</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly System Performance - Pump Station 2</h2>
                 <div class="relative flex-grow">
                     <canvas id="pumpStationBSystemChart"></canvas>
                 </div>
@@ -99,7 +131,7 @@
 
             <!-- Pump Station C System Chart -->
             <div class="bg-white p-6 rounded-xl shadow-md h-80 md:h-96 flex flex-col">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly System Performance - Pump Station C</h2>
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Monthly System Performance - Pump Station 3</h2>
                 <div class="relative flex-grow">
                     <canvas id="pumpStationCSystemChart"></canvas>
                 </div>
@@ -111,6 +143,7 @@
         document.addEventListener('DOMContentLoaded', () => {
 
             const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const fullMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             const labels = ['Pump Station A', 'Pump Station B', 'Pump Station C'];
             const dataKeys = ['ps_a', 'ps_b', 'ps_c'];
             const colors = ['rgb(59, 130, 246)', 'rgb(74, 222, 128)', 'rgb(239, 68, 68)'];
@@ -372,6 +405,31 @@
             createSystemChart('pumpStationASystemChart', combinedData.ps_a.volume, billedData.ps_a, nrwData.ps_a);
             createSystemChart('pumpStationBSystemChart', combinedData.ps_b.volume, billedData.ps_b, nrwData.ps_b);
             createSystemChart('pumpStationCSystemChart', combinedData.ps_c.volume, billedData.ps_c, nrwData.ps_c);
+
+            // Add an event listener to the "Generate Report" button
+            document.getElementById('generate-report-btn').addEventListener('click', () => {
+                const monthIndex = document.getElementById('month-select').value;
+                const selectedLocation = document.getElementById('location-select').value;
+
+                if (selectedLocation === 'East Zone') {
+                    // Open the new report page and pass only the month index via the URL
+                    window.open(`Mock_EastZone_Quicksight_Report.html?monthIndex=${monthIndex}`, '_blank');
+                    
+                } else if (selectedLocation === 'Pumping Station 1' || selectedLocation === 'Pumping Station 2' || selectedLocation === 'Pumping Station 3'){
+                    window.open(`Mock_EastZone_PumpingStation_Quickshight_Report.html?monthIndex=${monthIndex}&location=${encodeURIComponent(selectedLocation)}`, '_blank');
+                } else {
+                    // Placeholder for other locations
+                    const alertMessage = document.createElement('div');
+                    alertMessage.className = 'fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4';
+                    alertMessage.innerHTML = `
+                        <div class="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
+                            <p class="text-gray-700 font-medium mb-4">Report generation is only available for the East Zone. Please select "East Zone" to proceed.</p>
+                            <button onclick="this.parentElement.parentElement.remove()" class="bg-blue-600 text-white py-2 px-4 rounded-full">OK</button>
+                        </div>
+                    `;
+                    document.body.appendChild(alertMessage);
+                }
+            });
 
         });
     </script>
