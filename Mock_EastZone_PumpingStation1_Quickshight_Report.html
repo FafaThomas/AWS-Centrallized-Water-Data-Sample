@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pump Station 1 Daily Performance Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .report-section {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .report-table th, .report-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .report-table th {
+            color: #6b7280;
+            font-weight: 500;
+        }
+        .report-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-10">
+
+    <!-- Report Header -->
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-gray-800">Pump Station 1 Daily Performance Report</h1>
+        <p class="text-gray-500 mt-2 text-lg">Detailed Report for the Month of February 2025</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-10">
+        <!-- Executive Summary -->
+        <section class="report-section">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
+            <p class="text-gray-600 leading-relaxed">
+                This report provides a daily breakdown of Pump Station 1's performance for the month of February 2025. The data, based on 15-minute polling rates, highlights daily fluctuations in system input volume, billed consumption, and Non-Revenue Water (NRW) percentage. The month's trends indicate a stable operation with minor variations, contributing to the overall monthly efficiency.
+            </p>
+        </section>
+
+        <!-- Daily Performance Table -->
+        <section class="report-section">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Daily Performance Breakdown</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full report-table rounded-lg overflow-hidden" id="dailyDataTable">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th>Date</th>
+                            <th class="text-right">System Input Volume ($m^3$)</th>
+                            <th class="text-right">Billed Consumption ($m^3$)</th>
+                            <th class="text-right">NRW %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Daily Performance Chart -->
+        <section class="report-section">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Daily Performance Trends</h2>
+            <div class="h-96 w-full relative">
+                <canvas id="dailyChart"></canvas>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Mock Data Generation for February 2025 (29 days)
+            const dailyData = [];
+            for (let i = 1; i <= 29; i++) {
+                const day = i < 10 ? '0' + i : i;
+                const date = `Feb ${day}`;
+                
+                // Base values to maintain monthly totals
+                const baseVolume = 11800 / 29; 
+                const baseBilled = 9086 / 29;
+                const baseNRW = 23;
+
+                // Add some random fluctuation
+                const volume = Math.round(baseVolume + (Math.random() - 0.5) * 100);
+                const billed = Math.round(baseBilled + (Math.random() - 0.5) * 80);
+                const nrw = parseFloat((baseNRW + (Math.random() - 0.5) * 5).toFixed(2));
+
+                dailyData.push({ date, volume, billed, nrw });
+            }
+
+            // Populate Table
+            const tableBody = document.querySelector('#dailyDataTable tbody');
+            dailyData.forEach(day => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${day.date}</td>
+                    <td class="text-right">${day.volume.toLocaleString()}</td>
+                    <td class="text-right">${day.billed.toLocaleString()}</td>
+                    <td class="text-right">${day.nrw}%</td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Populate Chart
+            const chartData = {
+                labels: dailyData.map(d => d.date),
+                datasets: [
+                    {
+                        label: 'System Input Volume ($m^3$)',
+                        data: dailyData.map(d => d.volume),
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderRadius: 5,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Billed Consumption ($m^3$)',
+                        data: dailyData.map(d => d.billed),
+                        backgroundColor: 'rgba(74, 222, 128, 0.8)',
+                        borderRadius: 5,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'NRW %',
+                        data: dailyData.map(d => d.nrw),
+                        borderColor: 'rgb(239, 68, 68)',
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        tension: 0.3,
+                        type: 'line',
+                        fill: false,
+                        pointBackgroundColor: 'rgb(239, 68, 68)',
+                        yAxisID: 'y1'
+                    }
+                ]
+            };
+
+            const ctx = document.getElementById('dailyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            ticks: {
+                                color: '#6b7280',
+                                callback: function(value) { return value + ' m³'; }
+                            },
+                            title: { display: true, text: 'Volume' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: {
+                                color: '#ef4444',
+                                callback: function(value) { return value + '%'; }
+                            },
+                            title: { display: true, text: 'NRW %' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

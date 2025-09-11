@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>February 2025 East Zone Performance Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .report-section {
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .report-table th, .report-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .report-table th {
+            color: #6b7280;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-10">
+
+    <!-- Report Header -->
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-bold text-gray-800">East Zone Performance Report</h1>
+        <p class="text-gray-500 mt-2 text-lg">Detailed Report for the Month of February 2025</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto space-y-10">
+        <!-- Executive Summary -->
+        <section class="report-section">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Executive Summary</h2>
+            <p class="text-gray-600 leading-relaxed">
+                The East Zone demonstrated solid performance in February 2025, with a combined system input volume of 31,400 $m^3$.
+                The overall Non-Revenue Water (NRW) percentage for the zone averaged 22.33%, indicating continued
+                efficiency in water management. Pump Station C maintained the lowest NRW at 16%, while Pump Station B
+                had the highest at 28%. The total billed consumption for the month reached 24,494 $m^3$.
+            </p>
+        </section>
+
+        <!-- Combined East Zone Performance -->
+        <section class="report-section">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Combined East Zone Performance</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-8">
+                <div>
+                    <h3 class="text-xl font-medium text-gray-800 mb-4">Key Metrics - February 2025</h3>
+                    <table class="w-full report-table rounded-lg overflow-hidden">
+                        <thead>
+                            <tr class="bg-gray-50">
+                                <th>Metric</th>
+                                <th class="text-right">Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>System Input Volume ($m^3$)</td>
+                                <td class="text-right">31,400</td>
+                            </tr>
+                            <tr>
+                                <td>Billed Consumption ($m^3$)</td>
+                                <td class="text-right">24,494</td>
+                            </tr>
+                            <tr>
+                                <td>Energy Consumption (kWh)</td>
+                                <td class="text-right">17,700</td>
+                            </tr>
+                            <tr>
+                                <td>NRW %</td>
+                                <td class="text-right">22.33%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="h-80 w-full relative">
+                    <canvas id="combinedChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pump Station Breakdown -->
+        <section class="report-section">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Individual Pump Station Breakdown</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Pump Station A -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="text-xl font-medium text-gray-800 mb-4">Pump Station A</h3>
+                    <table class="w-full report-table">
+                        <tbody>
+                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right">11,800</td></tr>
+                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right">9,086</td></tr>
+                            <tr><td>Energy Consumption (kWh)</td><td class="text-right">6,200</td></tr>
+                            <tr><td>NRW %</td><td class="text-right">23.00%</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="h-60 mt-4">
+                        <canvas id="psAChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pump Station B -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="text-xl font-medium text-gray-800 mb-4">Pump Station B</h3>
+                    <table class="w-full report-table">
+                        <tbody>
+                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right">8,800</td></tr>
+                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right">6,336</td></tr>
+                            <tr><td>Energy Consumption (kWh)</td><td class="text-right">4,200</td></tr>
+                            <tr><td>NRW %</td><td class="text-right">28.00%</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="h-60 mt-4">
+                        <canvas id="psBChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Pump Station C -->
+                <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                    <h3 class="text-xl font-medium text-gray-800 mb-4">Pump Station C</h3>
+                    <table class="w-full report-table">
+                        <tbody>
+                            <tr><td>System Input Volume ($m^3$)</td><td class="text-right">10,800</td></tr>
+                            <tr><td>Billed Consumption ($m^3$)</td><td class="text-right">9,072</td></tr>
+                            <tr><td>Energy Consumption (kWh)</td><td class="text-right">7,300</td></tr>
+                            <tr><td>NRW %</td><td class="text-right">16.00%</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="h-60 mt-4">
+                        <canvas id="psCChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const combinedData = {
+                ps_a: { volume: 11800, billed: 9086, energy: 6200, nrw: 23 },
+                ps_b: { volume: 8800, billed: 6336, energy: 4200, nrw: 28 },
+                ps_c: { volume: 10800, billed: 9072, energy: 7300, nrw: 16 }
+            };
+
+            const totalVolume = combinedData.ps_a.volume + combinedData.ps_b.volume + combinedData.ps_c.volume;
+            const totalBilled = combinedData.ps_a.billed + combinedData.ps_b.billed + combinedData.ps_c.billed;
+            const totalNRW = ((combinedData.ps_a.nrw + combinedData.ps_b.nrw + combinedData.ps_c.nrw) / 3).toFixed(2);
+
+            const createChart = (canvasId, volume, billed, nrw) => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Metrics'],
+                        datasets: [
+                            {
+                                label: 'System Input Volume ($m^3$)',
+                                data: [volume],
+                                backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                                borderRadius: 5,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Billed Consumption ($m^3$)',
+                                data: [billed],
+                                backgroundColor: 'rgba(74, 222, 128, 0.8)',
+                                borderRadius: 5,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'NRW %',
+                                data: [nrw],
+                                borderColor: 'rgb(239, 68, 68)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                tension: 0.3,
+                                type: 'line',
+                                pointBackgroundColor: 'rgb(239, 68, 68)',
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: function() {
+                                        return 'February 2025';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                ticks: {
+                                    color: '#6b7280',
+                                    callback: function(value) { return value + ' m³'; }
+                                },
+                                title: { display: true, text: 'Volume' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                grid: { drawOnChartArea: false },
+                                ticks: {
+                                    color: '#ef4444',
+                                    callback: function(value) { return value + '%'; }
+                                },
+                                title: { display: true, text: 'NRW %' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { display: false }
+                            }
+                        }
+                    }
+                });
+            };
+
+            // Create charts for each section
+            createChart('combinedChart', totalVolume, totalBilled, totalNRW);
+            createChart('psAChart', combinedData.ps_a.volume, combinedData.ps_a.billed, combinedData.ps_a.nrw);
+            createChart('psBChart', combinedData.ps_b.volume, combinedData.ps_b.billed, combinedData.ps_b.nrw);
+            createChart('psCChart', combinedData.ps_c.volume, combinedData.ps_c.billed, combinedData.ps_c.nrw);
+        });
+    </script>
+</body>
+</html>
